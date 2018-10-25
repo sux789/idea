@@ -1,0 +1,16 @@
+
+<div class="container">
+    <h2>接口演示:{$actionInfo.titles[0]}</h2>
+    <form action="{:url($url)}">
+        <?php foreach($actionInfo['params'] as $paramName=>$param):
+        $default=isset($param['default'])?var_export($param['default'],1):'';
+        ?>
+        <div class="form-group">
+            <label for="{$paramName}">{$param.title|default=''}(类型:{$param.type|default=''}
+                <?php if($default):?>,默认:{$default}<?php endif?>):</label>
+            <input class="form-control" id="{$paramName}" name="{$paramName}">
+        </div>
+        <?php endforeach?>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

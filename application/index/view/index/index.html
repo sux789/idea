@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="divHello"></div>
+<script src="https://cdn.bootcss.com/jquery/1.12.3/jquery.min.js"></script>
+<script>
+
+    $(function () {
+        $.get('/index/index/hello',function (json) {
+            alert(json.code)
+        },'json')
+    })
+
+
+
+</script>
+
+
+</body>
+</html>

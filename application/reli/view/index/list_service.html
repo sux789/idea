@@ -1,0 +1,19 @@
+
+<div class="container">
+    <p>解析服务参数,返回;知道关联,修改会影响哪些接口</p>
+    <?php
+        $i=0;
+        foreach ($data as $class => $classInfo):
+
+        $classPath=explode('\\service\\',$class)[1];
+        foreach($classInfo['methods'] as $methodName=>$method):
+            $srvPath=$classPath.'/'.$methodName;
+
+    ?>
+    <h3>服务{++$i}: {$classPath}/{$methodName} {$method.titles[0]}</h3>
+    {include file="index/sub_method"}
+    <?php
+    endforeach;
+    endforeach;?>
+
+</div>

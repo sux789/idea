@@ -1,0 +1,47 @@
+<div class="container">
+    <p>数据库结构便于查询,可以根据设计原则检查设计是否合理,比如注释不能为空,not null且有默认值</p>
+    <table class="table table-striped">
+    <tr>
+        <th>
+        <th>表名称
+        <th>表说明</th>
+    </tr>
+    <?php
+    $i=0;
+    foreach ($data as $key => $table) :?>
+    <tr>
+        <th>{++$i}
+        <th>{$table.Name}
+        <th>{$table.Comment}</th>
+    </tr>
+    <tr>
+        <td colspan=100>
+            <table class="table table-bordered">
+                <tr>
+                    <td>
+                    <td>字段名
+                    <td>字段中文名
+                    <td>类型
+                    <td>索引
+                    <td>默认
+                </tr>
+                <?php
+                $ii=0;
+                foreach($table['detail'] as $col):
+                $default =(null===$col['Default'])?'':var_export($col['Default'],1);
+                ?>
+                <tr>
+                    <td>{++$ii}
+                    <td>{$col.Field}</td>
+                    <td>{$col.Comment}
+                    <td>{$col.Type}
+                    <td>{$col.Key}</td>
+                    <td>{$default}</td>
+                </tr>
+                <?php endforeach?>
+            </table>
+        </td>
+    </tr>
+    <?php endforeach?>
+    </table>
+</div>

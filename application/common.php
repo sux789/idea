@@ -1,0 +1,98 @@
+<?php
+// +----------------------------------------------------------------------
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: 流年 <liu21st@gmail.com>
+// +----------------------------------------------------------------------
+
+// 应用公共文件
+
+/**
+ * 调用服务
+ * @param string $path 路径
+ * @param array $argv 参数
+ */
+function call_service($path, $argv = [])
+{
+    return \app\common\service_client\ServiceClient::handle($path, $argv);
+}
+
+/**
+ * 统一的错误处理,有变量渲染格式同模板
+ * @param int $code 错误代码
+ * @param array $argv 消息的变量 如['nickname'=>'Li','mobile'=>'136..']对应"hello {$nickname},check you {$mobile}"
+ * @return \Exception
+ */
+function code_exception($code, $argv = [])
+{
+    $msg=config("exception.$code");
+
+    if($msg && $argv){
+        $map=[];
+        foreach ($argv as $key=>$value){
+            $map["{\$$key}"]=$value;
+        }
+        $msg=strtr($msg,$map);
+    }
+    throw new \app\common\exception\CodeException($msg, $code);
+}
+
+
+
+
+/**
+ * 高效转换类名称为小写,比如用于类名转换表名称
+ */
+function classtolower($str)
+{
+    $keys = [
+        'A' => 'a',
+        'B' => 'b',
+        'C' => 'c',
+        'D' => 'd',
+        'E' => 'e',
+        'F' => 'f',
+        'G' => 'g',
+        'H' => 'h',
+        'I' => 'i',
+        'J' => 'j',
+        'K' => 'k',
+        'L' => 'l',
+        'M' => 'm',
+        'N' => 'n',
+        'O' => 'o',
+        'P' => 'p',
+        'Q' => 'q',
+        'R' => 'r',
+        'S' => 's',
+        'T' => 't',
+        'U' => 'u',
+        'V' => 'v',
+        'W' => 'w',
+        'X' => 'x',
+        'Y' => 'y',
+        'Z' => 'z',
+    ];
+    $rt = '';
+    for ($i = 0; $char = $str[$i] ?? ''; $i++) {
+        $isUpper = isset($keys[$char]);//是否是大写
+        if ($isUpper) {
+            $rt .= $i ? '_' . $keys[$char] : $keys[$char];
+        } else {
+            $rt .= $char;
+        }
+    }
+    return $rt;
+}
+
+/**
+ * 转换小写类名便于调用实际的类,逆函数classtolower
+ */
+function classtoupper($str)
+{
+    return join('', array_map('ucfirst', explode('_', $str)));
+}

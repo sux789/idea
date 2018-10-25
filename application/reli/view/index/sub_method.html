@@ -1,0 +1,85 @@
+<?php
+    $isCtl=$classInfo['isController']??false;
+    $relationData=[];
+    $relationCaption='';
+
+    if($isCtl){
+        $relationData=$classInfo['called_service'][$methodName] ?? [];
+        $relationCaption="关联服务";
+    }else{
+        $relationCaption="关联接口";
+        $relationData=$relatedActions[$srvPath] ?? [];
+    }
+
+    $returnFakeStr='';
+    $return_type=$method['return']['type']??'';
+    $return_fields = $method['return']['fields']??[];
+    $isMulti = $method['return']['is_multi']??false;
+    if($isCtl){
+        $returnFakeStr=fake_json($return_type,$return_fields,$isMulti);
+    }else{
+        $returnFakeStr=fake_var_string($return_type,$return_fields,$isMulti);
+    }
+?>
+<table class="table table-bordered">
+    <tr>
+        <td>
+            参数
+        <td colspan="100">
+            <?php if(!empty($method['params'])):?>
+            <table class="table table-bordered">
+                <tr>
+                    <th>参数
+                    <th>类型
+                    <th>说明
+                    <th>默认值</th>
+                </tr>
+                <?php
+                foreach($method['params'] as $paramName=>$param):
+                $default=isset($param['default'])?var_export($param['default'],1):'';
+                ?>
+                <tr>
+                    <th>{$paramName}
+                    <td>{$param.type|default=''}
+                    <td>{$param.title|default=''}
+                    <td>{$default}
+                    </td>
+                    <?php endforeach?>
+            </table>
+            <?php endif?>
+        </td>
+    </tr>
+    <?php if($return_type):?>
+    <tr>
+        <td>返回说明</td>
+        <?php
+            if($return_fields):?>
+        <td>
+            <table>
+                <tr>
+                    <td>返回字段</td>
+                    <td>字段说明
+                </tr>
+                <?php foreach($return_fields as $fieldname=>$title):?>
+                <tr>
+                    <td>{$fieldname}
+                    <td>{$title}</td>
+                </tr>
+                <?php endforeach?>
+            </table>
+        </td>
+        <?php endif?>
+
+        <td>
+            <pre>{$returnFakeStr}</pre>
+        </td>
+    </tr>
+    <?php endif;?>
+    <?php if($relationData):?>
+    <tr>
+        <td>{$relationCaption}
+        <td colspan="100">
+        <?php echo join('<br>',$relationData)?>
+    </tr>
+    <?php endif;?>
+</table>
