@@ -21,6 +21,12 @@ abstract class AuthBase
         $this->type = $type;
     }
 
+    /**
+     * 设置token 移动端token包含有效期,而PC有效期在cookie过期时间
+     * @param $userInfo 用户信息
+     * @param int $lifetime 生命周期
+     * @return string
+     */
     abstract function createToken($userInfo, $lifetime = 0);
 
     /**
@@ -38,6 +44,10 @@ abstract class AuthBase
         return $this->useInfo;
     }
 
+    /**
+     * 移动端是从get读取,PC则是cookie
+     * @return string
+     */
     abstract function getToken();
 
     /**
