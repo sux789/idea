@@ -18,16 +18,14 @@ class BaseModel extends model
     function setPartitionName($data)
     {
         $this->table = lowercase_classname($this->getName());
-        $config=self::getPartitionConfig($this->table)
-        $step = $this->partitionStep ?? 0;
-        $field = $this->partitionField ?? '';
+        $config=self::getPartitionConfig($this->table);
+        $step = $config['step'] ?? 0;
+        $field = $config['field'] ?? '';
         $value = $data[$field] ?? 0;
         $seq = 0;
         if ($value && $step) {
             $seq = ceil($value / $step);
         }
-
-        $this->table = lowercase_classname($this->getName());
         if ($seq) {
             $this->table .= '_' . $seq;
         }
