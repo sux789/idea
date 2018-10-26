@@ -144,5 +144,10 @@ return [
     'exception_handle'       => '\\app\\common\\exception\\Http',//
     // 密钥
     'secret_key'             => '%&*bfOOIdsa',
+    // token过期时间
+    'token_lifetime'         => 84000,
+    //判断是移动端,后台,还是pc端,如果三端部署在一起,可以根据module其他因素,如果已经初始化则不用
+    'auth_type'              => 'mobile' ,
+    'auth_field_name'             => 'token' ,
 
 ];
