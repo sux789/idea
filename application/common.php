@@ -43,11 +43,11 @@ function code_exception($code, $argv = [])
 
 
 
-
 /**
- * 高效转换类名称为小写,比如用于类名转换表名称
+ * 高效转换类名称为小写,比如用于类名转换表名称,反函数classname
+ * 手痒重构原逻辑: strtolower(trim(preg_replace("/[A-Z]/", "_\\0", $name), "_"))
  */
-function classtolower($str)
+function lowercase_classname($str)
 {
     $keys = [
         'A' => 'a',
@@ -90,9 +90,9 @@ function classtolower($str)
 }
 
 /**
- * 转换小写类名便于调用实际的类,逆函数classtolower
+ * 转换小写字符串类为Psr类名.反函数 lowercase_classname
  */
-function classtoupper($str)
+function classname($str)
 {
     return join('', array_map('ucfirst', explode('_', $str)));
 }

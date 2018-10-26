@@ -28,7 +28,7 @@ class BaseModel extends model
             $seq = ceil($value / $step);
         }
 
-        $this->table = classtolower($this->getName());
+        $this->table = lowercase_classname($this->getName());
         if ($seq) {
             $this->table .= '_' . $seq;
         }

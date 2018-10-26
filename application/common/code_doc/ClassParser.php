@@ -18,7 +18,7 @@ class ClassParser
         $rt = [];
         $rt['fileName'] = $class->getFileName();
         $rt['shortName'] = $class->getShortName();
-        $rt['lowerName'] = classtolower($rt['shortName']);
+        $rt['lowerName'] = lowercase_classname($rt['shortName']);
         $rt['isController'] = stripos($class->getNamespaceName(), '\\controller');
 
         foreach ($class->getMethods(\ReflectionMethod :: IS_PUBLIC) as $method) {
