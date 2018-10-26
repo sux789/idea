@@ -70,7 +70,7 @@ abstract class AuthBase
             substr(md5(microtime()), -$ckey_length)) : '';
         $cryptkey = $keya . md5($keya . $keyc);
         $key_length = strlen($cryptkey);
-        $string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) :
+        $string = $operation == 'DECODE' ? self::urlsafe_b64decode(substr($string, $ckey_length)) :
             sprintf('%010d', $expiry ? $expiry + time() : 0) .
             substr(md5($string . $keyb), 0, 16) . $string;
         $string_length = strlen($string);
@@ -102,7 +102,7 @@ abstract class AuthBase
                 return '';
             }
         } else {
-            return $keyc . str_replace('=', '', base64_encode($result));
+            return $keyc . str_replace('=', '', self::urlsafe_b64encode($result));
         }
     }
 
@@ -119,5 +119,26 @@ abstract class AuthBase
         $text = $user_id . "\t" . $user_name . "\t" . $this->type;
         $key = config('app.secret_key');
         return self::authcode($text, $key, 'ENCODEE', $lifetime);
+    }
+
+    /**
+     * URL base64解码
+     */
+    private static function urlsafe_b64decode($string) {
+        $data = str_replace(array('-','_'),array('+','/'),$string);
+        $mod4 = strlen($data) % 4;
+        if ($mod4) {
+            $data .= substr('====', $mod4);
+        }
+        return base64_decode($data);
+    }
+
+    /**
+     * URL base64编码
+     */
+    private static function urlsafe_b64encode($string) {
+        $data = base64_encode($string);
+        $data = str_replace(array('+','/','='),array('-','_',''),$data);
+        return $data;
     }
 }
