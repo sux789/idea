@@ -10,9 +10,6 @@ use think\model;
 
 class BaseModel extends model
 {
-    protected $partitionStep = 0;//设置分表数量
-    protected $partitionField = '';//设置分表字段
-
     /**
      * 在model层里面分表算法
      * @param $data
@@ -20,6 +17,8 @@ class BaseModel extends model
      */
     function setPartitionName($data)
     {
+        $this->table = lowercase_classname($this->getName());
+        $config=self::getPartitionConfig($this->table)
         $step = $this->partitionStep ?? 0;
         $field = $this->partitionField ?? '';
         $value = $data[$field] ?? 0;
@@ -33,6 +32,14 @@ class BaseModel extends model
             $this->table .= '_' . $seq;
         }
         return true;
+    }
+
+    private static function getPartitionConfig($table){
+        static $rts=[];
+        if(!isset($rts[$table])){
+            $rts[$table]=config("partition.{$table}");
+        }
+        return $rts[$table];
     }
 
     /**
