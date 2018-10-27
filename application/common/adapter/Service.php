@@ -23,7 +23,11 @@ class Service
         return array_intersect_key($this->getArgv(), $_POST);
     }
 
-    public function setExecuter(ExecuteHandle $executer)
+    /**
+     * 注入客户端
+     * @param ExecuteHandle $executer
+     */
+    final public function setExecuter(ExecuteHandle $executer)
     {
         $this->executer = $executer;
     }

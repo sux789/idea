@@ -7,10 +7,10 @@
 namespace app\reli\controller;
 
 use app\common\code_doc\ParseServer;
-use app\common\adapter\RelyController;
+use app\common\adapter\ReliController;
 use think\App;
 
-class Index extends RelyController
+class Index extends ReliController
 {
     function __construct(App $app = null)
     {
