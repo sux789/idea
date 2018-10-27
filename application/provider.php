@@ -11,6 +11,6 @@
 
 // 应用容器绑定定义
 return [
-    'var'=>\app\common\RuntimeVarManager::class,
+    'var'=>\app\common\system_service\RuntimeVarManager::class,
     'auth'=>app\common\system_service\auth\Auth::class,
 ];
