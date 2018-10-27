@@ -1,10 +1,10 @@
 <?php
 
-namespace app\common;
+namespace app\common\system_service;
 
 /**
- * 运行时无限分层变量管理,用于运行时通信
- * 可以通过运行时解耦工作,比如验证可以专人开发,作为独立middleware
+ * 运行时无限分层变量管理,
+ * 用于运行时通信,可以根据运行时解耦开发工作
  */
 class RuntimeVarManager
 {
