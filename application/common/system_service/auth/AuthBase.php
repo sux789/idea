@@ -45,6 +45,14 @@ abstract class AuthBase
     }
 
     /**
+     * 删除登录cookie
+     * @return mixed
+     */
+    public function delete(){
+        return \cookie($this->storeName, null);
+    }
+
+    /**
      * 移动端是从get读取,PC则是cookie
      * @return string
      */

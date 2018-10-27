@@ -6,6 +6,8 @@ class Index extends AdminController
 {
     public function index()
     {
+        print_r($this->admin_id);
+
         return view();
     }
 }

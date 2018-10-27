@@ -12,34 +12,27 @@ namespace app\common\system_service\auth;
  */
 class Auth
 {
+    const TYPE_PC = 'pc';
+    const TYPE_ADMIN = 'admin';
+    const TYPE_MOBILE = 'mobile';
 
-    private static $ins;
-
-    /**
-     * 判断是否登录
-     * @return bool
-     */
-    public static function isLogin()
-    {
-        return !!self::get();
-    }
+    private $ins;
 
     /**
-     * 读取登录信息
-     * @return mixed
+     * 创建token,PC端在建立对应cookie
+     * @return string
      */
-    public static function get()
+    public function createToken($userInfo, $lifetime = 0)
     {
-        return self::authInit() ? self::$ins->get() : [];
-
+        return $this->authInit() ? $this->ins->createToken($userInfo, $lifetime) : '';
     }
 
     /**
      * 自动初始化
      */
-    private static function authInit()
+    private function authInit()
     {
-        if (!self::$ins) {
+        if (!$this->ins) {
             $type = '';
             $item = config('app.auth_type');
             if (is_string($item)) {
@@ -50,26 +43,38 @@ class Auth
             $type = strtolower($type);
 
             $field_name = config('app.auth_field_name');
-            self::init($type, $field_name);
+            $this->init($type, $field_name);
         }
-        return self::$ins;
+        return $this->ins;
     }
 
     /**
      * 得到例化
      */
-    public static function init($type, $storeName = 'token')
+    public function init($type, $storeName = 'token')
     {
         $argv = ['type' => $type, 'storeName' => $storeName ? $storeName : 'token'];
-        return self::$ins = container()->get(self::class . ucfirst($type), $argv);
+        $this->ins = container()->get(self::class . ucfirst($type), $argv);
+        return $this;
     }
 
     /**
-     * 创建token,PC端在建立对应cookie
-     * @return string
+     * 读取登录验证信息
+     * @return mixed
      */
-    public static function createToken($userInfo, $lifetime = 0)
+    public function get()
     {
-        return self::authInit() ? self::$ins->createToken($userInfo, $lifetime) : '';
+        return $this->authInit() ? $this->ins->get() : [];
+
     }
+
+    /**
+     * 清除登录验证信息
+     * @return bool
+     */
+    public function delete()
+    {
+        return $this->authInit() ? $this->ins->delete() : false;
+    }
+
 }
