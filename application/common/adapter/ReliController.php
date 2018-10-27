@@ -5,14 +5,8 @@ namespace app\common\adapter;
 use think\App;
 use think\Controller;
 
-class RelyController extends Controller
+class ReliController extends Controller
 {
-    protected $middleware = [
-        /*'\app\common\middleware\AdminAuth::class' => [
-            'except' => ['login']
-        ],*/
-    ];
-    protected $operator_id=0;
 
     public function __construct(App $app = null)
     {
