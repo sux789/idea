@@ -11,7 +11,6 @@ use app\common\system_service\auth\Auth;
 
 class Misc
 {
-
     const ERRNO_MOBILE_NOT_EXISTS = 10100101;
     const ERRNO_PASSWORD_WRONG = 10100102;
 
@@ -36,10 +35,10 @@ class Misc
      */
     public function verifyLogin($mobile = '', $password = '')
     {
-        $user=call_service('admin/user/find',$mobile);
+        $user = call_service('admin/user/find', $mobile);
 
         if (!$user) {
-            code_exception(self::ERRNO_MOBILE_NOT_EXISTS,['mobile'=>$mobile]);
+            code_exception(self::ERRNO_MOBILE_NOT_EXISTS, ['mobile' => $mobile]);
         }
 
         if (encode_password($password) != $user['password']) {
@@ -62,7 +61,7 @@ class Misc
         ];
 
         foreach ($data as $item) {
-            $item['mobile_id'] = get_mobile_id($item['mobile']);
+            $item['mobile_id'] = mobile_to_id($item['mobile']);
             $exist = call_service('admin/user/exists', $item['mobile_id']);
 
             if (!$exist) {

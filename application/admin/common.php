@@ -10,7 +10,7 @@
  * @param string $mobile 手机号码
  * @return int
  */
-function get_mobile_id($mobile)
+function mobile_to_id($mobile)
 {
     return sprintf('%u', crc32($mobile));
 }
