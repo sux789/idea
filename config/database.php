@@ -15,7 +15,7 @@ return [
     // 服务器地址
     'hostname'        => $_SERVER['MYSQL_HOST'],
     // 数据库名
-    'database'        => 'uuonce',
+    'database'        => 'idea',
     // 用户名
     'username'        => 'www',
     // 密码

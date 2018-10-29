@@ -12,38 +12,66 @@ use app\common\system_service\auth\Auth;
 class Misc
 {
 
-    const ERRNO_MOBILE = 10100101;
-    const ERRNO_PASSWORD = 10100102;
+    const ERRNO_MOBILE_NOT_EXISTS = 10100101;
+    const ERRNO_PASSWORD_WRONG = 10100102;
 
-
+    /**
+     * login form
+     * @return \think\response\View
+     */
     public function login()
     {
+        // logout
         app('auth')->delete();
+
         return view('login');
     }
 
+    /**
+     * 登录校验
+     * @param string $mobile 手机号
+     * @param string $password 密码
+     * @return array
+     * @throws \app\common\exception\CodeException
+     */
     public function verifyLogin($mobile = '', $password = '')
     {
-        // 假设用户数据
-        $administrators = [
-            '15001173500' => [1, 'c828743f8acab7623a1b03c4f6e295bb', 'sux'],
+        $user=call_service('admin/user/find',$mobile);
+
+        if (!$user) {
+            code_exception(self::ERRNO_MOBILE_NOT_EXISTS,['mobile'=>$mobile]);
+        }
+
+        if (encode_password($password) != $user['password']) {
+            code_exception(self::ERRNO_PASSWORD_WRONG);
+        }
+
+        $authInfo = ['user_id' => $user['id'], 'user_name' => $user['name']];
+        app('auth')->init(Auth::TYPE_ADMIN)->createToken($authInfo);
+
+        return $authInfo;
+    }
+
+    /**
+     * 演示批量初始化后台用户
+     */
+    public function initUser()
+    {
+        $data = [
+            ['mobile' => '15001173500', 'password' => 'sux789', 'name' => 'sux'],
         ];
 
-        $admin = $administrators[$mobile] ?? [];
+        foreach ($data as $item) {
+            $item['mobile_id'] = get_mobile_id($item['mobile']);
+            $exist = call_service('admin/user/exists', $item['mobile_id']);
 
-        if (!$admin) {
-            code_exception(self::ERRNO_MOBILE);
+            if (!$exist) {
+                $item['password'] = encode_password($item['password']);
+                $id = call_service('admin/user/add', $item);
+                echo "<p>{$item['mobile']} has created </p>";
+            } else {
+                echo "<p>{$item['mobile']} exists!</p>";
+            }
         }
-
-        list($admin_id, $saved_password, $admin_name) = $admin;
-
-        if (md5($password) != $saved_password) {
-            code_exception(self::ERRNO_PASSWORD);
-        }
-
-        $authInfo = ['user_id' => $admin_id, 'user_name' => $admin_name];
-        app('auth')->init(Auth::TYPE_ADMIN);
-        app('auth')->createToken($authInfo);
-        return $authInfo;
     }
 }

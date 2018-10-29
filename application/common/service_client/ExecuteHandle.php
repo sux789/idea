@@ -3,17 +3,19 @@
 namespace app\common\service_client;
 
 use think\Container;
+
 /**
  * 执行服务
  */
 class ExecuteHandle extends BaseHandle
 {
-    private $instance = null;
+    protected $instance;
 
     public function __construct($config)
     {
         parent::__construct($config);
         $this->instance = $this->getServiceInstance();
+        $this->instance->setExecuter($this);
     }
 
     /**
@@ -27,7 +29,6 @@ class ExecuteHandle extends BaseHandle
         static $objs = [];
         if (!isset($objs[$class])) {
             $objs[$class] = Container::get($class);
-            $objs[$class]->setExecuter($this);
         }
         return $objs[$class];
     }
@@ -41,7 +42,7 @@ class ExecuteHandle extends BaseHandle
         static $rts = [];
         if (!isset($rts[$path])) {
             $rs = [];
-            $segments = array_filter(explode('/', trim($path, " /\n\t\r\s")));
+            $segments = array_filter(explode('/', trim($path, " /\n\t\r")));
             if (count($segments) > 1) {
                 $action = array_pop($segments);
                 $class = array_pop($segments);
@@ -86,12 +87,14 @@ class ExecuteHandle extends BaseHandle
      */
     public function getArgv()
     {
-        static $argv = [], $parsed = false;
-        if (!$parsed) {
-            $parsed = true;
-            $argv = self::parseArgv($this->getReflectMethod(), $this->argv);
+        static $rts = [];
+        $path = $this->path;
+
+        if (!isset($rts[$path])) {
+            $rts[$path] = self::parseArgv($this->getReflectMethod(), $this->argv);
         }
-        return $argv;
+
+        return $rts[$path];
     }
 
     /**
@@ -104,7 +107,7 @@ class ExecuteHandle extends BaseHandle
 
         // 便捷传入参数 比如getById(1)
         if (is_scalar($rawArgv) && 1 == count($parameters)) {
-            $rt[key($parameters)] = $rawArgv;
+            $rt[$parameters[0]->getName()] = $rawArgv;
         }
 
         if (!$rt && $parameters) {

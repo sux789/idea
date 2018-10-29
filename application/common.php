@@ -29,23 +29,22 @@ function call_service($path, $argv = [])
  */
 function code_exception($code, $argv = [])
 {
-    $msg=config("exception.$code");
+    $msg = config("exception_zh_cn.$code");
 
-    if($msg && $argv){
-        $map=[];
-        foreach ($argv as $key=>$value){
-            $map["{\$$key}"]=$value;
+    if ($msg && $argv) {
+        $map = [];
+        foreach ($argv as $key => $value) {
+            $map["{\$$key}"] = $value;
         }
-        $msg=strtr($msg,$map);
+        $msg = strtr($msg, $map);
     }
     throw new \app\common\exception\CodeException($msg, $code);
 }
 
 
-
 /**
  * 高效转换类名称为小写,比如用于类名转换表名称,反函数classname
- * 手痒重构原逻辑: strtolower(trim(preg_replace("/[A-Z]/", "_\\0", $name), "_"))
+ * 重构原逻辑: strtolower(trim(preg_replace("/[A-Z]/", "_\\0", $name), "_"))
  */
 function lowercase_classname($str)
 {
@@ -95,4 +94,14 @@ function lowercase_classname($str)
 function classname($str)
 {
     return join('', array_map('ucfirst', explode('_', $str)));
+}
+
+/**
+ * 统一存储密码加密方式
+ * @param string $password 密码
+ * @return string
+ */
+function encode_password($password)
+{
+    return md5("{$password}{$password[3]}{$password[0]}{$password[1]}");
 }
