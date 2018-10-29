@@ -23,7 +23,10 @@ class ClassParser
 
         foreach ($class->getMethods(\ReflectionMethod :: IS_PUBLIC) as $method) {
             $methodName = $method->getName();
-            if ('__construct' == $methodName or '__'==substr($methodName,0,2)) {
+            if ('__construct' == $methodName
+                or '__'==substr($methodName,0,2)
+                or $method->isFinal()
+                ) {
                 continue;
             }
             $rt['methods'][$methodName] = self::parseMethod($method, $rt);

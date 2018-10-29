@@ -25,7 +25,7 @@ class ExecuteHandle extends BaseHandle
     {
         list($category, $class, $action) = self::parsePath($this->path);
         $className = trim(str_replace('/', '\\', "$category/$class"), '\\');
-        $class = 'app\\common\\service\\' . $className;
+        $class = 'app\\common\\service\\' . classname($className);
         static $objs = [];
         if (!isset($objs[$class])) {
             $objs[$class] = Container::get($class);

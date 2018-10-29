@@ -6,6 +6,10 @@
         foreach ($data as $class => $classInfo):
 
         $classPath=explode('\\service\\',$class)[1];
+        $segs=explode('\\',$classPath);
+        $className=lowercase_classname(array_pop($segs));
+        $segs[]=$className;
+        $classPath=join('/',$segs);
         foreach($classInfo['methods'] as $methodName=>$method):
             $srvPath=$classPath.'/'.$methodName;
 
