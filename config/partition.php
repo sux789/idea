@@ -16,7 +16,7 @@ return
                 'step' => 100 * 1000,
                 'field' => 'fans_id'
             ],
-        'social_riend' =>
+        'social_friend' =>
             [
                 'step' => 100 * 1000,
                 'field' => 'user_id'

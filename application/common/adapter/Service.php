@@ -24,7 +24,7 @@ class Service
     }
 
     /**
-     * 注入客户端
+     * 注入执行者环境
      * @param ExecuteHandle $executer
      */
     final public function setExecuter(ExecuteHandle $executer)

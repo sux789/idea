@@ -7,13 +7,13 @@
 namespace app\common\service\admin;
 
 use app\common\adapter\Service;
-use app\common\model\AdminUser;
+use app\common\model\AdminUser as AdminUserModel;
 
-class User extends Service
+class AdminUser extends Service
 {
     protected $adminUser;
 
-    public function __construct(AdminUser $adminUser)
+    public function __construct(AdminUserModel $adminUser)
     {
         $this->adminUser = $adminUser;
     }
@@ -36,7 +36,6 @@ class User extends Service
     function add($mobile_id, $mobile, $name, $password)
     {
         $argv = $this->getArgv();
-        $argv['create_at'] = time();
         return $this->adminUser->insertGetId($argv);
     }
 

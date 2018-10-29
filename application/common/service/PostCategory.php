@@ -2,8 +2,8 @@
 
 namespace app\common\service;
 
-use app\common\model\PostCategory as PostCatetoryModel;
 use app\common\adapter\Service;
+use app\common\model\PostCategory as PostCatetoryModel;
 
 class PostCategory extends Service
 {
@@ -23,43 +23,24 @@ class PostCategory extends Service
     function add($parent_id = 0, $title, $description = '', $sort = 0)
     {
         $argv = $this->getArgv();
+        $this->model->insert($argv);
     }
 
-    /**
-     * 更新数据
-     * @param $id
-     * @param $data 提交数据
-     */
-    function update($id = 0, $data = [])
-    {
-
-    }
 
     /**
      * 读取一条数据
      */
-    function get($id = 0, $title = '')
+    function get($id = 0)
     {
-        $where = [];
-        if ($id) {
-            $where = ['id' => $id];
-        } elseif ($this) {
-            $where = ['title' => ['like', "$title%"]];
-        }
-
-        $rt = [];
-        if ($where) {
-            $rt = $this->model->where($where)->find();
-        }
-        return $rt;
+        return $this->model->find($id);
     }
 
     /**
      * 读取多条数据,可以根据
      */
-    function lists($parent_id = false, $title = '')
+    function listAll()
     {
-
+        return $this->model->select();
     }
 
     /**
@@ -78,6 +59,5 @@ class PostCategory extends Service
         }
         return $rt;
     }
-
 
 }
