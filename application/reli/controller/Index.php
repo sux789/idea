@@ -6,21 +6,22 @@
 
 namespace app\reli\controller;
 
-use app\common\code_doc\ParseServer;
 use app\common\adapter\ReliController;
+use app\common\code_doc\ParseServer;
 use think\App;
 
 class Index extends ReliController
 {
     function __construct(App $app = null)
     {
-        self::clear();
+        //self::clear();
         parent::__construct($app);
     }
 
     /**
      * 数据库结构,方便查看
      * @todo 根据设计原则,显示不符合设计原则的提示
+     * @return \think\response\View
      */
     function listSchema()
     {
@@ -37,6 +38,8 @@ class Index extends ReliController
             'data' => ParseServer::listParsedService(),
             'relatedActions' => ParseServer::listRelatedAction(),
         ];
+        //echo '<pre>';
+        //print_r($data['relatedActions']);die;
         return view('list_service', $data);
     }
 
@@ -73,6 +76,6 @@ class Index extends ReliController
             'url' => $url,
             'actionInfo' => $actionInfo
         ];
-        return view('show_form',$data);
+        return view('show_form', $data);
     }
 }
