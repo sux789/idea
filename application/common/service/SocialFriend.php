@@ -15,6 +15,8 @@ use app\common\model\SocialFriend as SocialFriendModel;
  */
 class SocialFriend extends Service
 {
+    protected $model;
+
     public function __construct(SocialFriendModel $model)
     {
         $this->model = $model;//\model('SocialFriend');

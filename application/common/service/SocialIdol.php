@@ -3,8 +3,9 @@
 namespace app\common\service;
 
 use app\common\adapter\Service;
-use app\common\model\SocialFans as SocialFansModel;
 use app\common\model\SocialIdol as SocialIdolModel;
+use app\common\model\SocialFans as SocialFansModel;
+
 
 /**
  * 类 关注的偶像
@@ -12,13 +13,13 @@ use app\common\model\SocialIdol as SocialIdolModel;
  */
 class SocialIdol extends Service
 {
-    protected $modelIdol;
-    protected $modelFans;
+    protected $modelSocialIdol;
+    protected $modelSocialFans;
 
-    public function __construct(SocialFansModel $modelFans, SocialIdolModel $modelIdol)
+    public function __construct(SocialFansModel $modelSocialFans, SocialIdolModel $modelSocialIdol)
     {
-        $this->modelFans = $modelFans;
-        $this->modelIdol = $modelIdol;
+        $this->modelSocialFans = $modelSocialFans;
+        $this->modelSocialIdol = $modelSocialIdol;
     }
 
     /**
@@ -31,8 +32,8 @@ class SocialIdol extends Service
     function follow($fans_id, $idol_id)
     {
         $data = ['fans_id' => $fans_id, 'idol_id' => $idol_id];
-        return $this->modelIdol->save($data)
-            && $this->modelFans->save($data);
+        return $this->modelSocialIdol->save($data)
+            && $this->modelSocialFans->save($data);
     }
 
     /**
@@ -48,7 +49,7 @@ class SocialIdol extends Service
             $where[] = ['id', '<', $last_id];
         }
 
-        return $this->modelIdol
+        return $this->modelSocialIdol
                 ->setPartition(['fans_id' => $fans_id])
                 ->field('id,fans_id,idol_id')
                 ->where($where)

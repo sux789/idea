@@ -11,11 +11,11 @@ use app\common\model\SocialFans as SocialFansModel;
  */
 class SocialFans extends Service
 {
-    private $modelFans;
+    private $modelSocialFans;
 
     public function __construct(SocialFansModel $modelFans)
     {
-        $this->modelFans = $modelFans;
+        $this->modelSocialFans = $modelFans;
     }
 
     /**
@@ -26,12 +26,12 @@ class SocialFans extends Service
      */
     function listFans($idol_id, $last_id = 0, $count = 10)
     {
-        $where = [['idol_id' ,'=', $idol_id]];
+        $where = [['idol_id', '=', $idol_id]];
         if ($last_id) {
             $where[] = ['id', '<', $last_id];
         }
 
-        return $this->modelFans
+        return $this->modelSocialFans
                 ->setPartition(['idol_id' => $idol_id])
                 ->field('id,fans_id,idol_id')
                 ->where($where)

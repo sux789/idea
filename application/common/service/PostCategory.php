@@ -3,13 +3,15 @@
 namespace app\common\service;
 
 use app\common\adapter\Service;
-use app\common\model\PostCategory as PostCatetoryModel;
+use app\common\model\PostCategory as ModelPostCatetory;
 
 class PostCategory extends Service
 {
-    public function __construct(PostCatetoryModel $model)
+    protected $modelPostCategory;
+
+    public function __construct(ModelPostCatetory $model)
     {
-        $this->model = $model;
+        $this->modelPostCategory = $model;
     }
 
     /**
@@ -23,7 +25,7 @@ class PostCategory extends Service
     function add($parent_id = 0, $title, $description = '', $sort = 0)
     {
         $argv = $this->getArgv();
-        $this->model->insert($argv);
+        $this->modelPostCategory->insert($argv);
     }
 
 
@@ -32,7 +34,7 @@ class PostCategory extends Service
      */
     function get($id = 0)
     {
-        return $this->model->find($id);
+        return $this->modelPostCategory->find($id);
     }
 
     /**
@@ -40,7 +42,7 @@ class PostCategory extends Service
      */
     function listAll()
     {
-        return $this->model->select();
+        return $this->modelPostCategory->select();
     }
 
     /**
@@ -50,7 +52,7 @@ class PostCategory extends Service
     public function isAncestorId($id, int $ancestor_id)
     {
         $rt = false;
-        while ($parent_id = $this->model->where(['id' => $id])->value('parent_id')) {
+        while ($parent_id = $this->modelPostCategory->where(['id' => $id])->value('parent_id')) {
             if ($ancestor_id === $parent_id) {
                 $rt = true;
                 break;
