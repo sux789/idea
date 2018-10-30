@@ -91,6 +91,11 @@ class ClassParser
         return $out[1] ?? [];
     }
 
+    /**
+     * 读取源码
+     * @param $sourceInfo
+     * @return string
+     */
     private static function getSource($sourceInfo)
     {
         $start = $sourceInfo['startLine'];
