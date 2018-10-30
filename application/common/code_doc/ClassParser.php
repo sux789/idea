@@ -24,9 +24,9 @@ class ClassParser
         foreach ($class->getMethods(\ReflectionMethod :: IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if ('__construct' == $methodName
-                or '__'==substr($methodName,0,2)
+                or '__' == substr($methodName, 0, 2)
                 or $method->isFinal()
-                ) {
+            ) {
                 continue;
             }
             $rt['methods'][$methodName] = self::parseMethod($method, $rt);
@@ -51,14 +51,16 @@ class ClassParser
 
         if ($classInfo['isController']) {
             $rt['calledService'] = self::parseCalledService($rt['source']);
+        } else {
+            $rt['calledModel'] = self::parseCalledModel($rt['source']);
         }
 
         $parsedComment = MethodCommentParser::handle($rt['source']['comment']);
         $rt['titles'] = $parsedComment['titles'];
 
-        $refTables=SchemaFieldReader::vaildTableName($parsedComment['tables']);
-        if(!$refTables){
-            $refTables=SchemaFieldReader::vaildTableName($classInfo['lowerName']);
+        $refTables = SchemaFieldReader::vaildTableName($parsedComment['tables']);
+        if (!$refTables) {
+            $refTables = SchemaFieldReader::vaildTableName($classInfo['lowerName']);
         }
 
         $params = self::getMethodParameters($method);
@@ -83,17 +85,28 @@ class ClassParser
      */
     private static function parseCalledService($sourceInfo)
     {
+        $source = self::getSource($sourceInfo);
+        $pattern = '/call_service[\\s]*\([\\s]*[\\\'|\\"]([^\\\'\\"]+)/';
+        preg_match_all($pattern, $source, $out);
+        return $out[1] ?? [];
+    }
+
+    private static function getSource($sourceInfo)
+    {
         $start = $sourceInfo['startLine'];
         $lenth = $sourceInfo['endLine'] - $start;
-        $actionSource = join("\n", array_slice(file($sourceInfo['fileName']), $start, $lenth));
-        $pattern = '/call_service[\\s]*\([\\s]*[\\\'|\\"]([^\\\'\\"]+)/';
-        preg_match_all($pattern, $actionSource, $out);
+        return join("\n", array_slice(file($sourceInfo['fileName']), $start, $lenth));
+    }
 
-        $rt = [];
-        if (!empty($out[1])) {
-            $rt = $out[1];
-        }
-        return $rt;
+    /**
+     * 解析对应代码调用model
+     */
+    private static function parseCalledModel($sourceInfo)
+    {
+        $source = self::getSource($sourceInfo);
+        $pattern = '/\\$this[\\s]*->[\\s]*model([\w]+)/';
+        preg_match_all($pattern, $source, $out);
+        return $out[1] ?? [];
     }
 
     /**

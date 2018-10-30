@@ -128,7 +128,7 @@ class ParseServer
         foreach (self::listParsedController() as $class => $classInfo) {
             $classPath = str_replace(['app\\', '\\controller\\'], ['', '/'], $class);
             foreach ($classInfo['methods'] as $methodName => $method) {
-                $calledService = $classInfo['called_service'][$methodName] ?? [];
+                $calledService = $method['calledService'] ?? [];
                 foreach ($calledService as $service) {
                     $rt[$service][] = $classPath . '/' . $methodName;
                 }

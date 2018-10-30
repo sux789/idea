@@ -1,15 +1,5 @@
 <?php
     $isCtl=$classInfo['isController']??false;
-    $relationData=[];
-    $relationCaption='';
-
-    if($isCtl){
-        $relationData=$classInfo['called_service'][$methodName] ?? [];
-        $relationCaption="关联服务";
-    }else{
-        $relationCaption="关联接口";
-        $relationData=$relatedActions[$srvPath] ?? [];
-    }
 
     $returnFakeStr='';
     $return_type=$method['return']['type']??'';
@@ -75,11 +65,29 @@
         </td>
     </tr>
     <?php endif;?>
-    <?php if($relationData):?>
+
+    <?php if($relatedAction=$relatedActions[$srvPath] ?? []):?>
     <tr>
-        <td>{$relationCaption}
+        <td>关联控制器
         <td colspan="100">
-        <?php echo join('<br>',$relationData)?>
+            <pre><?php echo join("\n",$relatedAction)?></pre>
     </tr>
     <?php endif;?>
+
+    <?php if($calledService=$method['calledService'] ?? []):?>
+    <tr>
+        <td>调用服务
+        <td colspan="100">
+            <pre><?php echo join("\n",$calledService)?></pre>
+    </tr>
+    <?php endif;?>
+
+    <?php if($calledModel=$method['calledModel'] ?? []):?>
+    <tr>
+        <td>调用模型
+        <td colspan="100">
+        <?php echo join('&nbsp',$calledModel)?>
+    </tr>
+    <?php endif;?>
+
 </table>
