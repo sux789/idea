@@ -11,22 +11,25 @@ use app\common\model\AdminUser as AdminUserModel;
 
 class AdminUser extends Service
 {
-    protected $adminUser;
+    protected $modelAdminUser;
 
-    public function __construct(AdminUserModel $adminUser)
+    public function __construct(AdminUserModel $modelAdminUser)
     {
-        $this->adminUser = $adminUser;
+        $this->modelAdminUser = $modelAdminUser;
     }
 
     /**
      * 根据手机号读取
-     * @param $mobile
-     * @param $password
+     * @return array
      */
     function find($mobile)
     {
-        return $this->adminUser
-            ->where(['mobile_id'=>get_mobile_id($mobile)])
+        $where = [
+            'mobile_id' => mobile_to_id($mobile),
+            'mobile' => $mobile,
+        ];
+        return $this->modelAdminUser
+            ->where($where)
             ->find();
     }
 
@@ -36,7 +39,7 @@ class AdminUser extends Service
     function add($mobile_id, $mobile, $name, $password)
     {
         $argv = $this->getArgv();
-        return $this->adminUser->insertGetId($argv);
+        return $this->modelAdminUser->insertGetId($argv);
     }
 
     /**
@@ -44,7 +47,9 @@ class AdminUser extends Service
      */
     function exists($mobile_id)
     {
-        return $this->adminUser->whereExists(['mobile_id' => $mobile_id]);
+        return $this->modelAdminUser
+            ->where(['mobile_id' => $mobile_id])
+            ->value('mobile_id');
     }
 
 

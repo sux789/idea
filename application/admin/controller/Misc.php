@@ -22,7 +22,6 @@ class Misc
     {
         // logout
         app('auth')->delete();
-
         return view('login');
     }
 
@@ -35,7 +34,7 @@ class Misc
      */
     public function verifyLogin($mobile = '', $password = '')
     {
-        $user = call_service('admin/user/find', $mobile);
+        $user = call_service('admin/admin_user/find', $mobile);
 
         if (!$user) {
             code_exception(self::ERRNO_MOBILE_NOT_EXISTS, ['mobile' => $mobile]);
@@ -62,11 +61,11 @@ class Misc
 
         foreach ($data as $item) {
             $item['mobile_id'] = mobile_to_id($item['mobile']);
-            $exist = call_service('admin/user/exists', $item['mobile_id']);
+            $exist = call_service('admin/admin_user/exists', $item['mobile_id']);
 
             if (!$exist) {
                 $item['password'] = encode_password($item['password']);
-                $id = call_service('admin/user/add', $item);
+                $id = call_service('admin/admin_user/add', $item);
                 echo "<p>{$item['mobile']} has created </p>";
             } else {
                 echo "<p>{$item['mobile']} exists!</p>";
