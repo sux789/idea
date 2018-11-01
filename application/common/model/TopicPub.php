@@ -12,13 +12,13 @@ class TopicPub extends BaseModel
      * @return bool
      * @throws \Exception
      */
-    function delBySnapId(int $snap_id)
+    function deleteBySnapId(int $snap_id): bool
     {
         $where = ['snap_id' => $snap_id];
-        $exists = $this->where($where)->value('snap_id');
-        return $exists
-            ? $this->where($where)->limit(1)->delete()
-            : false;
+        return $this
+            ->where($where)
+            ->limit(1)
+            ->delete();
     }
 
     /**

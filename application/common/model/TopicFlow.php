@@ -69,4 +69,16 @@ class TopicFlow extends BaseModel
             ->order('id desc')
             ->value('state');
     }
+
+    /**
+     * 读取审核历史
+     */
+    function history(int $snap_id, string $order = 'DESC')
+    {
+        $order = strtoupper($order) == 'DESC' ? 'DESC' : '';
+        return $this
+            ->where(['snap_id' => $snap_id])
+            ->order("id $order")
+            ->select();
+    }
 }
