@@ -10,12 +10,13 @@ use think\Container;
 class ExecuteHandle extends BaseHandle
 {
     protected $instance;
+    protected $baseNamespace = '';
 
     public function __construct($config)
     {
         parent::__construct($config);
         $this->instance = $this->getServiceInstance();
-        $this->instance->setExecuter($this);
+        $this->instance->setExecuter($this);//注入实际执行环境
     }
 
     /**
@@ -23,36 +24,14 @@ class ExecuteHandle extends BaseHandle
      */
     private function getServiceInstance()
     {
-        list($category, $class, $action) = self::parsePath($this->path);
-        $className = trim(str_replace('/', '\\', "$category/$class"), '\\');
-        $class = 'app\\common\\service\\' . classname($className);
         static $objs = [];
+        $class = $this->config['class'];
         if (!isset($objs[$class])) {
             $objs[$class] = Container::get($class);
         }
         return $objs[$class];
     }
 
-    /**
-     * 解析路径dir/serivce_class/action,用于实例化类和执行action
-     * @return array []|[$dir, $class, $action]
-     */
-    public static function parsePath($path)
-    {
-        static $rts = [];
-        if (!isset($rts[$path])) {
-            $rs = [];
-            $segments = array_filter(explode('/', trim($path, " /\n\t\r")));
-            if (count($segments) > 1) {
-                $action = array_pop($segments);
-                $class = array_pop($segments);
-                $dir = join('/', $segments);
-                $rs = [$dir, $class, $action];
-            }
-            $rts[$path] = $rs;
-        }
-        return $rts[$path];
-    }
 
     /**
      * 执行
@@ -60,7 +39,7 @@ class ExecuteHandle extends BaseHandle
     public function handle()
     {
         $reflectMethod = $this->getReflectMethod();
-        $argv = $this->getArgv();
+        $argv = $this->getFinalArgv();
         return $reflectMethod->invokeArgs($this->instance, $argv);
     }
 
@@ -71,8 +50,8 @@ class ExecuteHandle extends BaseHandle
     {
         static $rts = [];
         $path = $this->path;
+        $action = $this->config['action'];
         if (!isset($rts[$path])) {
-            list($dir, $class, $action) = self::parsePath($this->path);
             $objService = $this->getServiceInstance();
             if (!method_exists($objService, $action)) {
                 throw new \Exception("not method_exists  $action of $class ");
@@ -83,18 +62,21 @@ class ExecuteHandle extends BaseHandle
     }
 
     /**
-     * 解析时间参数,这个方法提供组装 用于insert
+     * 解析传递给服务的参数=客户端实际传递参数+代码定义默认参数
      */
-    public function getArgv()
+    public function getFinalArgv()
     {
         static $rts = [];
-        $path = $this->path;
-
-        if (!isset($rts[$path])) {
-            $rts[$path] = self::parseArgv($this->getReflectMethod(), $this->argv);
+        $key = $this->path;
+        if ($this->argv) {
+            $key .= sha1(join("\t", $this->argv));
         }
 
-        return $rts[$path];
+        if (!isset($rts[$key])) {
+            $rts[$key] = self::parseArgv($this->getReflectMethod(), $this->argv);
+        }
+
+        return $rts[$key];
     }
 
     /**
@@ -105,26 +87,25 @@ class ExecuteHandle extends BaseHandle
         $rt = [];//参数和默认参数整合
         $parameters = $reflectMethod->getParameters();
 
-        // 便捷传入参数 比如getById(1)
+        // 便捷传入参数,初始化$rawArgv,比如get(1)转换为get(['name'=>1])
         if (is_scalar($rawArgv) && 1 == count($parameters)) {
-            $rt[$parameters[0]->getName()] = $rawArgv;
+            $rawArgv[$parameters[0]->getName()] = $rawArgv;
         }
 
-        if (!$rt && $parameters) {
-            foreach ($parameters as $key => $item) {
-                $var_name = $item->getName();
-                if (isset($rawArgv[$var_name])) {
-                    $rt[$var_name] = $rawArgv[$var_name];
+        foreach ($parameters as $key => $item) {
+            $var_name = $item->getName();
+            if (isset($rawArgv[$var_name])) {
+                $rt[$var_name] = $rawArgv[$var_name];
+            } else {
+                if ($item->isDefaultValueAvailable()) {
+                    $rt[$var_name] = $item->getDefaultValue();
                 } else {
-                    if ($item->isDefaultValueAvailable()) {
-                        $rt[$var_name] = $item->getDefaultValue();
-                    } else {
-                        $msg = "service {$reflectMethod->class} method {$reflectMethod->class} argv miss:" . $var_name;
-                        throw new \InvalidArgumentException($msg);
-                    }
+                    $msg = "service {$reflectMethod->class} method {$reflectMethod->class} argv miss:" . $var_name;
+                    throw new \InvalidArgumentException($msg);
                 }
             }
         }
+
         return $rt;
     }
 }

@@ -13,10 +13,7 @@ class TransactionHandle extends BaseHandle
      */
     public function handle()
     {
-        $reflectMethod = $this->getReflectMethod();
-        $argv = $this->getArgv();
         $rt = null;
-
         self::startTrans();
         try {
             $rt = $this->next->handle();

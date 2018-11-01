@@ -12,7 +12,7 @@ class Service
      */
     protected function getArgv()
     {
-        return $this->executer->getArgv();
+        return $this->executer->getFinalArgv();
     }
 
     /**

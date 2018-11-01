@@ -105,3 +105,15 @@ function encode_password($password)
 {
     return md5("{$password}{$password[3]}{$password[0]}{$password[1]}");
 }
+
+/**
+ * get chache key
+ */
+function get_cache_key($path, $argv = []): string
+{
+    if ($argv) {
+        ksort($argv, SORT_STRING);//一致参数固定顺序
+        $path = join('%&^`|"/', $argv);//不同参数有不同sha1,比如[10,1]与[1,01]
+    }
+    return sha1($path);
+}
