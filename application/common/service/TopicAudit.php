@@ -13,6 +13,7 @@ use app\common\model\TopicSnap;
 
 /**
  * 主题审核服务
+ * 背景:类似抖音,一个视频对应一个主题
  * @index snap_id+is_last 读取当前状态,及历史
  * @index state + is_last 读取待审核
  * @package app\common\service
@@ -145,10 +146,11 @@ class TopicAudit extends Service
     /**
      * 读取审核流程
      */
-    function history(int $snap_id)
+    function history(int $snap_id, string $order = 'DESC')
     {
-        return $this->modelTopicFlow
-            ->where(['snap_id' => $snap_id])
-            ->select();
+        $data = $this->getArgv();
+        echo "<h1>$order</h1>";
+        print_r($data);
+        return $this->modelTopicFlow->history($snap_id, $order);
     }
 }
