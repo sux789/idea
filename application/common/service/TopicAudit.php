@@ -25,10 +25,13 @@ class TopicAudit extends Service
     const ST_WITHDRAW = 40;//状态:下架
     const ST_DEL = 50; //状态:删除
 
-    const ERRNO_NOT_APPLY = 20100101;//错误码:不状态不在待审核
-    const ERRNO_DELETE_WRONG_OWNER = 20100102;//错误码:只能删除user_id自己的快照
+    const ERRNO_APPLY_EXISTS = 20100111;//错误码:已经申请过
+    const ERRNO_APPROVE_UNAPPLIED = 20100121;//错误码:未申请
+    const ERRNO_WITHDRAW_NOT_EXISTS = 20100131;//错误码:主题不存在上架列表中
+    const ERRNO_DELETE_WRONG_OWNER = 20100141;//错误码:只能删除user_id自己的快照
+    const ERRNO_DELETE_EXISTS = 20100142;//错误码:已经删除
 
-    protected $modelTopicSnap;//快照
+    protected $modelTopicSnap;// 快照
     protected $modelTopicFlow;// 流程
     protected $modelTopicPub;// 发布
 
@@ -44,9 +47,14 @@ class TopicAudit extends Service
      */
     function withdraw($snap_id, $admin_id, $note = '')
     {
+        $exists = $this->modelTopicPub->existSnapId($snap_id);
+        if (!$exists) {
+            code_exception(self::ERRNO_WITHDRAW_NOT_EXISTS);
+        }
+
         $data = $this->getArgv();
         $data['state'] = self::ST_WITHDRAW;
-        $del = $this->modelTopicPub->delBySnapId($snap_id); // 成功删除已经存在
+        $del = $this->modelTopicPub->deleteBySnapId($snap_id); // 成功删除已经存在
         return $del && $this->modelTopicFlow->add($data);
     }
 
@@ -55,10 +63,9 @@ class TopicAudit extends Service
      */
     function approve($snap_id, $admin_id, $note = '')
     {
-        $isPublished = $this->modelTopicPub->existSnapId($snap_id);
-        $checkState = !$isPublished && $this->modelTopicFlow->checkState($snap_id, self::ST_APPLY);
+        $checkState = $this->modelTopicFlow->checkState($snap_id, self::ST_APPLY);
         if (!$checkState) {
-            code_exception(self::ERRNO_NOT_APPLY, ['snap_id' => $snap_id]);
+            code_exception(self::ERRNO_APPROVE_UNAPPLIED, ['snap_id' => $snap_id]);
         }
 
         $state_row_id = 0;
@@ -82,10 +89,10 @@ class TopicAudit extends Service
     /**
      * 打回草稿
      */
-    function disapprove($upload_id, $admin_id, $note = '')
+    function disapprove($snap_id, $admin_id, $note = '')
     {
         if (!$this->modelTopicFlow->checkState($snap_id, self::ST_APPLY)) {
-            code_exception(self::ERRNO_NOT_APPLY, ['snap_id' => $snap_id]);
+            code_exception(self::ERRNO_APPLY_MISS_SATAE, ['snap_id' => $snap_id]);
         }
         $data = $this->getArgv();
         $data['state'] = self::ST_UNAPPROVE;
@@ -97,6 +104,10 @@ class TopicAudit extends Service
      */
     function apply($user_id, $upload_id, $url, $description = '')
     {
+        if ($this->modelTopicSnap->isApplied($upload_id)) {
+            code_exception(self::ERRNO_APPLY_EXISTS);
+        }
+
         $data = $this->getArgv();
         $snap_id = $this->modelTopicSnap->insertGetId($data);
         $flowData = [
@@ -114,19 +125,30 @@ class TopicAudit extends Service
     {
         $snap = $this->modelTopicSnap->find($snap_id);
         $owner_id = $snap['user_id'] ?? 0;
+
         if ($user_id !== $owner_id) {
             code_exception(self::ERRNO_DELETE_WRONG_OWNER);
         }
 
-        $this->modelTopicPub->delBySnapId($snap_id);//如果已经发布则删除
+        $deleted = $this->modelTopicFlow->checkState($snap_id, self::ST_DEL);
+        if ($deleted) {
+            code_exception(self::ERRNO_DELETE_EXISTS);
+        }
+
+        $this->modelTopicPub->deleteBySnapId($snap_id);//如果已经发布则删除
 
         $data = $this->getArgv();
         $data['state'] = self::ST_DEL;
         return $this->modelTopicFlow->add($data);
     }
 
-    function listAll()
+    /**
+     * 读取审核流程
+     */
+    function history(int $snap_id)
     {
-        return $this->modelTopicFlow->order("id desc")->select();
+        return $this->modelTopicFlow
+            ->where(['snap_id' => $snap_id])
+            ->select();
     }
 }

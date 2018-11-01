@@ -69,4 +69,5 @@ class TopicFlow extends BaseModel
             ->order('id desc')
             ->value('state');
     }
+
 }
