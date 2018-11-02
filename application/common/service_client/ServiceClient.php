@@ -2,9 +2,9 @@
 
 namespace app\common\service_client;
 
+use app\common\service_client\TransactionHandle;
 /**
- * Class ServiceClient
- * @package app\common\service_client
+ * 服务调用客户端类
  */
 class ServiceClient
 {
@@ -19,13 +19,13 @@ class ServiceClient
         list($class, $action, $path) = self::parsePath($path);
         $config = config("service.$path");
 
-        $config['cacheLifetime'] = $config['cacheLifetime'] ?? 0;
-        $config['isTransOn'] = $config['isTransOn'] ?? false;
-        $config['argv'] = $argv;
-
-        $config['path'] = $path;
-        $config['class'] = $class;
-        $config['action'] = $action;
+        $config['cachekeyHandle'] = $config['cachekeyHandle'] ?? '';//自定义缓存处理器
+        $config['cacheLifetime'] = $config['cacheLifetime'] ?? 0;//缓存时间,0不缓存
+        $config['isTransOn'] = $config['isTransOn'] ?? false;//是否启用事物
+        $config['argv'] = $argv;//调用参数
+        $config['path'] = $path;//服务标志,用于缓存等
+        $config['class'] = $class;//当前执行的服务完整类名
+        $config['action'] = $action;//当前执行服务方法
 
         $invoker = self::getInvoker($config);
         return $invoker->handle();
@@ -33,7 +33,7 @@ class ServiceClient
 
     /**
      * 解析路径dir/serivce_class/action,用于实例化类和执行action
-     * @return array []|[$dir, $class, $action]
+     * @return array []|[$class, $action, $path]
      */
     public static function parsePath($path)
     {
@@ -45,8 +45,8 @@ class ServiceClient
                 $action = array_pop($segments);
                 $className = classname(array_pop($segments));
                 $namespace = config('service_base_namespace');
-                $class = '';//::class
-                $newPath = '';// 重新格式化路径,整个系统调用一致
+                $class = '';//完整类名
+                $newPath = '';//格式化的路径,客户端路径支持小写;
                 if ($segments) {
                     $class = "$namespace\\" . join('\\', $segments) . "\\$className";
                     $newPath = join('/', $segments) . "$className/$action";

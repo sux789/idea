@@ -5,8 +5,17 @@ namespace app\common\service_client;
 use think\Db;
 use app\common\service_client\BaseHandle;
 
+/**
+ * 提供事物处理
+ */
 class TransactionHandle extends BaseHandle
 {
+
+   public function __construct($config)
+   {
+       parent::__construct($config);
+       echo static ::class;
+   }
 
     /**
      * 执行

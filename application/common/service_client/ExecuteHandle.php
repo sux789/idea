@@ -5,7 +5,7 @@ namespace app\common\service_client;
 use think\Container;
 
 /**
- * 执行服务
+ * 执行服务类
  */
 class ExecuteHandle extends BaseHandle
 {
