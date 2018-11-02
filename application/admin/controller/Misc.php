@@ -7,7 +7,7 @@ namespace app\admin\controller;
  * 展示一些说明及无需权限的功能
  */
 
-use app\common\system_service\auth\Auth;
+use app\common\system_service\auth\AuthProxy;
 
 class Misc
 {
@@ -45,7 +45,7 @@ class Misc
         }
 
         $authInfo = ['user_id' => $user['id'], 'user_name' => $user['name']];
-        app('auth')->init(Auth::TYPE_ADMIN)->createToken($authInfo);
+        app('auth')->init(AuthProxy::TYPE_ADMIN)->createToken($authInfo);
 
         return $authInfo;
     }

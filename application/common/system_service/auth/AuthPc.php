@@ -22,7 +22,7 @@ class AuthPc extends AuthBase
     public function createToken($userInfo, $lifetime = 0)
     {
         $option['expire'] = $lifetime;
-        $token = self::encode($userInfo, 0);
+        $token = self::encode($userInfo, $lifetime);
         \cookie($this->storeName, $token, $option);
         return $token;
     }

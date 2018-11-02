@@ -5,12 +5,13 @@
  */
 
 namespace app\common\system_service\auth;
+
 /**
  * 类 登录认证
  * 使用:登录成功createToken设置或返回token,读取登录信息get
  * @package app\common\system_service\auth
  */
-class Auth
+class AuthProxy
 {
     const TYPE_PC = 'pc';
     const TYPE_ADMIN = 'admin';
@@ -49,12 +50,13 @@ class Auth
     }
 
     /**
-     * 得到例化
+     * 得到类型实例
      */
     public function init($type, $storeName = 'token')
     {
         $argv = ['type' => $type, 'storeName' => $storeName ? $storeName : 'token'];
-        $this->ins = container()->get(self::class . ucfirst($type), $argv);
+        $class=self::getNamespace().'\\Auth'.ucfirst($type);
+        $this->ins = container()->get($class, $argv);
         return $this;
     }
 
@@ -77,4 +79,11 @@ class Auth
         return $this->authInit() ? $this->ins->delete() : false;
     }
 
+    /**
+     * 自己命名空间
+     * @return bool|string
+     */
+    private static function getNamespace(){
+        return  substr(self::class,0,strrpos(self::class,'\\'));;
+    }
 }

@@ -22,7 +22,7 @@ abstract class AuthBase
     }
 
     /**
-     * 设置token 移动端token包含有效期,而PC有效期在cookie过期时间
+     * 设置token token含效期,而PC同时设置cookie过期时间
      * @param $userInfo 用户信息
      * @param int $lifetime 生命周期
      * @return string
