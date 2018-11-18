@@ -6,9 +6,9 @@
 
 namespace app\common\adapter;
 
-use think\model;
+use think\Model;
 
-class BaseModel extends model
+class BaseModel extends Model
 {
     protected $autoWriteTimestamp = true;
     protected $createTime = 'create_at';
@@ -23,7 +23,7 @@ class BaseModel extends model
     {
         $this->table = lowercase_classname($this->getName());
         $config = self::getPartitionConfig($this->table);
-        dump($config);
+     
         $step = $config['step'] ?? 0;
         $field = $config['field'] ?? '';
         $value = $data[$field] ?? 0;

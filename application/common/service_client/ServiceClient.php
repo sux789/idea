@@ -2,7 +2,6 @@
 
 namespace app\common\service_client;
 
-use app\common\service_client\TransactionHandle;
 /**
  * 服务调用客户端类
  */
@@ -69,12 +68,20 @@ class ServiceClient
     static function getInvoker(array $config)
     {
         $invoker = null;// 调用处理器,肯能是缓存或事物或服务执行
+        // 如果有缓存时间
         if ($config['cacheLifetime']) {
             $invoker = new CacheHandle($config);
         }
+        // 如果有事物处理
         if ($config['isTransOn']) {
-            $invoker = new TransactionHandle($config);
+            $transactionHandle = new TransactionHandle($config);
+            if ($invoker) {
+                $invoker->setNext($transactionHandle);
+            } else {
+                $invoker = $transactionHandle;
+            }
         }
+        //服务执行对象
         $serviceExecuter = new ExecuteHandle($config);
         if ($invoker) {
             $invoker->setNext($serviceExecuter);

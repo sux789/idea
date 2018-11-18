@@ -9,6 +9,8 @@ namespace app\reli\controller;
 use app\common\adapter\ReliController;
 use app\common\code_doc\ParseServer;
 use think\App;
+use Michelf\Markdown;
+use think\facade\Env;
 
 class Index extends ReliController
 {
@@ -16,6 +18,11 @@ class Index extends ReliController
     {
         //self::clear();
         parent::__construct($app);
+    }
+
+    public function index(){
+        $readme_path=Env::get('app_path').'../README.md';
+        echo  Markdown::defaultTransform(file_get_contents($readme_path));
     }
 
     /**

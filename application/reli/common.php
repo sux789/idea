@@ -55,12 +55,12 @@ function fake_json($type, $fileds = [], $isMulti = false)
  */
 function fake_var_string($type, $fileds = [], $isMulti = false)
 {
-    $rt='';
-    if($fileds){
+    $rt = '';
+    if ($fileds) {
         $value = fake_data($type, $fileds, $isMulti);
-        $rt=var_export($value, true);
-    }elseif($type){
-        $rt =$type;
+        $rt = var_export($value, true);
+    } elseif ($type) {
+        $rt = $type;
     }
     return $rt;
 }
@@ -70,7 +70,9 @@ function fake_var_string($type, $fileds = [], $isMulti = false)
  * @param string $actionName
  * @return string
  */
-function get_http_method($actionName){
-    $isGet= 'get'==substr($actionName,0,3) or 'list'==substr($actionName,0,4);
-    return $isGet ?'GET':'POST';
+function get_http_method($actionName)
+{
+    $isGet = 'get' == substr($actionName, 0, 3) or 'list' == substr($actionName, 0, 4);
+    return $isGet ? 'GET' : 'POST';
 }
+

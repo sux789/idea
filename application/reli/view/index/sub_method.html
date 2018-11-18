@@ -66,7 +66,8 @@
     </tr>
     <?php endif;?>
 
-    <?php if($relatedAction=$relatedActions[$srvPath] ?? []):?>
+    <?php $srvPath=$srvPath??'';
+    if($relatedAction=$relatedActions[$srvPath] ?? []):?>
     <tr>
         <td>关联控制器
         <td colspan="100">

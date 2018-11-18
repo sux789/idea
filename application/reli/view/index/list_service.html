@@ -10,8 +10,9 @@
                     <?php foreach ($data as $class => $classInfo):
                     $classPath=str_replace(['app\\common\\service\\','\\'],['','/'],$class);
                     foreach($classInfo['methods'] as $methodName=>$method):
+                    $srvPath="$classPath/$methodName";
                     ?>
-                    <li>{$classPath}/{$methodName}</li>
+                    <li>{$srvPath}</li>
                     <?php endforeach;endforeach?>
                 </ol>
             </div>
@@ -34,14 +35,15 @@
 
         $classPath=explode('\\service\\',$class)[1];
         $segs=explode('\\',$classPath);
-        $className=lowercase_classname(array_pop($segs));
+        $className=array_pop($segs);//lowercase_classname();
         $segs[]=$className;
         $classPath=join('/',$segs);
         foreach($classInfo['methods'] as $methodName=>$method):
         $srvPath=$classPath.'/'.$methodName;
 
         ?>
-        <h3>服务{++$i}: {$classPath}/{$methodName} {$method.titles[0]}</h3>
+        <a name="{$srvPath}"></a>
+        <h3>服务{++$i}: {$srvPath} {$method.titles[0]}</h3>
         {include file="index/sub_method"}
         <?php
     endforeach;

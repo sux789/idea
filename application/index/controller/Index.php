@@ -16,19 +16,42 @@ class Index extends IndexController
      */
     public function index($v1 = '', $v2 = '')
     {
-        $rs=JsonResponse::format(null,1,2);
+        return redirect('/reli');
+        echo '<pre>';
+        $argv=['snap_id'=>"5",'user_id'=>"8",'note'=>'pass'];
+        $rs=call_service('topic_audit/history',$argv);
+        print_r($rs);
+        $argv=['snap_id'=>"5",'order'=>"asc",'note'=>'pass'];
+        $rs=call_service('topic_audit/history',$argv);
+        print_r($rs);
 
-        code_exception(100100100,['x'=>1,'y'=>2]);
-        $rs = call_service('User/get', ['name' => 1]);
+        //$rs=call_service('topic_audit/delete',$argv);
+        echo '<hr><h1>end delete</h1> ';
 
-
-        $rs = call_service('PostCategory/get', ['id' => 1]);
-        $rs = call_service("PostCategory/get", ['id' => 1]);
-
-        return $rs;
-        return view();
-        //return '<style type="text/css">*{ padding: 0; margin: 0; } div{ padding: 4px 48px;} a{color:#2E5CD5;cursor: pointer;text-decoration: none} a:hover{text-decoration:underline; } body{ background: #fff; font-family: "Century Gothic","Microsoft yahei"; color: #333;font-size:18px;} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.6em; font-size: 42px }</style><div style="padding: 24px 48px;"> <h1>:) </h1><p> ThinkPHP V5.1<br/><span style="font-size:30px">12载初心不改（2006-2018） - 你值得信赖的PHP框架</span></p></div><script type="text/javascript" src="https://tajs.qq.com/stats?sId=64890268" charset="UTF-8"></script><script type="text/javascript" src="https://e.topthink.com/Public/static/client.js"></script><think id="eab4b9f840753f8e7"></think>';
+        $argv=['user_id'=>mt_rand(1,9), 'upload_id'=>1,'url'=>'http://baidu.com','description'=>mt_rand(1,9999)];
+        //$rs=call_service('topic_audit/apply',$argv) ;
+        echo '<hr><h1>end apply</h1> ';
+        //dump($rs);
+        $argv=['snap_id'=>5,'admin_id'=>6,'note'=>'pass'];
+       // $rs=call_service('topic_audit/withdraw',$argv) ;
+        echo '<hr><h1>end withdraw</h1> ';
+        //dump($rs);
+        //$rs=call_service('topic_audit/approve',$argv) ;;
+        echo '<hr><h1>end withdraw</h1> ';
     }
 
+    function tes1(){
+        echo '<pre>';
+        $rs=call_service('social_friend/agree',['friend_id'=>100002,'user_id'=>1]);
+        var_dump($rs);
 
+        $rs=call_service('social_idol/follow',['idol_id'=>100002,'fans_id'=>1]);
+        var_dump($rs);
+        $rs2=call_service('social_idol/listIdol',['idol_id'=>1,'fans_id'=>1]);
+        print_r($rs2);
+        $rs2=call_service('social_fans/listfans',['idol_id'=>100002,'fans_id'=>1]);
+
+        //print_r($rs);
+        print_r($rs2);
+    }
 }
