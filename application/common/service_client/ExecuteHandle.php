@@ -69,7 +69,7 @@ class ExecuteHandle extends BaseHandle
         static $rts = [];
         $key = $this->path;
         if ($this->argv) {
-            $key .= sha1(join("\t", $this->argv));
+            $key .= sha1(join("\t", (array)$this->argv));
         }
 
         if (!isset($rts[$key])) {
