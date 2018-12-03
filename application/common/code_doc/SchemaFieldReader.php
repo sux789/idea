@@ -7,7 +7,7 @@
 namespace app\common\code_doc;
 
 /**
- * Class 读取数据库字段结构用于补充文档
+ * 自动读取数据库字段结构用于补充文档
  * @package app\common\code_doc
  */
 class SchemaFieldReader

@@ -38,71 +38,38 @@ class SocialFriend extends Service
             'friend_id' => $user_id,
         ];
 
-        return $this->modelSocialFriend->setPartition($data_1)->insert($data_1)
-            && $this->modelSocialFriend->setPartition($data_2)->insert($data_2);
+        return $this->modelSocialFriend->save($data_1)
+            && $this->modelSocialFriend->save($data_2);
     }
 
-    /**
-     * 是否是朋友
-     * @return boolean
-     */
-    function isFriend($user_id, $friend_id)
-    {
-        $where = [
-            'user_id' => $user_id,
-            'friend_id' => $friend_id
-        ];
-        return $this->modelSocialFriend->whereExists($where);
-    }
 
     /**
-     * 读取读取好友id
-     * @param mixed $userIds 用户ID
-     * @return array [firend_id=>user_id]
-     */
-    private function getFirendId($userIds)
-    {
-        $rt = [];
-        if ($userIds) {
-            $rs = $this->modelSocialFriend
-                ->field('user_id,friend_id')
-                ->where(['user_id' => $userIds])
-                ->select()
-                ->toArray();
-            if ($rs) {
-                $rt = array_column($rs, 'user_id', 'friend_id');
-            }
-        }
-        return $rt;
-    }
-
-    /**
-     * 社交度关系算法简化版
+     * 社交6度关系算法简化版
      * @param int $aId 用户a的user_id
      * @param int $bId 用户b的user_id
      * @return array
      * - 可能结果会非常非常大，所以应该有条数限制
-     * - 扩充多少度都这个思路，需要仔细判断
+     * - 当前取双方二度好友实际得到三度关系，才4次比较；如果取双方三度好友得到5度关系，但是会有9次比较
      */
     public function listSixDegreeRelation(int $aId, int $bId)
     {
         $rt = [];
         $endPoins = [$aId => true, $bId => true];
-        $a1 = $this->getFirendId($aId);// a一度好友
-        $b1 = $this->getFirendId($bId); // b 一度好友
+        $a1 = $this->modelSocialFriend->getFirendMapping($aId);// a一度好友
+        $b1 = $this->modelSocialFriend->getFirendMapping($bId); // b 一度好友
 
         // step 1 :a->a1->b
         $idA1B1 = array_intersect_key($a1, $b1);
         $rt = array_keys($idA1B1);
         // step 2:a->b2->b1->b
-        $b2 = $this->getFirendId(array_keys($b1));// b的二度好友
+        $b2 = $this->modelSocialFriend->getFirendMapping(array_keys($b1));// b的二度好友
         $b2 = array_diff_key($b2, $b1, $endPoins);
         $idA1B2B1 = array_intersect_key($a1, $b2);
         foreach ($idA1B2B1 as $b2Id => $b1Id) {
             $rt[] = [$b2Id, $b1Id];
         }
         // step 3: a->a1->a2->b
-        $a2 = $this->getFirendId(array_keys($a1));//  a的二度好友
+        $a2 = $this->modelSocialFriend->getFirendMapping(array_keys($a1));//  a的二度好友
         $a2 = array_diff_key($a2, $a1, $endPoins);
         $idA1A2B1 = array_intersect_key($a2, $b1);
         foreach ($idA1A2B1 as $a2Id => $a1Id) {

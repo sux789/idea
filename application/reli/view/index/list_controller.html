@@ -7,8 +7,11 @@
                 <?php foreach ($data as $class => $classInfo):
                     $classPath=str_replace(['app\\','\\controller\\'],['','/'],$class);
                     foreach($classInfo['methods'] as $methodName=>$method):
+                    if(empty($method['calledService'])){
+                        continue;
+                    }
                     ?>
-                    <li>{$classPath}/{$methodName}</li>
+                    <li><a href="?item={$classPath}/{$methodName}">{$classPath}/{$methodName}</a></li>
                     <?php endforeach;endforeach?>
                 </ol>
             </div>
@@ -24,13 +27,18 @@
                 </div>
             </div>-->
         </div>
-    <p>控制器解析参数,返回,关联服务,及事件提交表单</p>
+    <p>控制器解析参数,返回参数说明,关联服务,及测试表单，源代码</p>
     <?php
     $i=0;
     foreach ($data as $class => $classInfo):
 
         $classPath=str_replace(['app\\','\\controller\\'],['','/'],$class);
         foreach($classInfo['methods'] as $methodName=>$method):
+        if($item=input('item')){
+            if($item!= "$classPath/$methodName"){
+                continue;
+            }
+        }
         if(empty($method['calledService'])){
             continue;
         }
@@ -39,7 +47,7 @@
         <a name="{$classPath}/{$methodName}"></a>
         <h3>接口{++$i}: {$methodName|get_http_method} /{$classPath}/{$methodName} {$method.titles[0]}</h3>
     <p></p>
-    <p><a target="_blank" href="{:url('showForm',['url'=>"$classPath/$methodName"])}">测试接口</a>(以真实账号登录获取token才能测试)<p>
+
     {include file="index/sub_method"}
     <?php
     endforeach;

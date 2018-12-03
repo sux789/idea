@@ -5,8 +5,7 @@ namespace app\common\code_doc;
 use think\Container;
 
 /**
- * 类 类列举器
- * @package app\common\code_doc
+ * 多级类文件读取
  */
 class ClassLister
 {

@@ -6,7 +6,6 @@ use think\Container;
 use think\facade\Cache;
 
 /**
- * 类 解析服务
  * 协调缓存,类列表器,类解析器,提供解析数据
  * @package app\common\code_doc
  */

@@ -10,5 +10,4 @@ use app\common\adapter\BaseModel;
 
 class AdminUser extends BaseModel
 {
-
 }

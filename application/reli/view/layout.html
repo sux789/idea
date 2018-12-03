@@ -23,20 +23,24 @@
             overflow-x: hidden;
             overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
         }
+
     </style>
 </head>
 <body>
 <nav class="navbar  navbar-expand-sm bg-success navbar-dark sticky-top" >
-    <a class="navbar-brand " href="#">苏翔编码思想实例</a>
+    <a class="navbar-brand " href="{:url('index')}">苏翔编码思想实例</a>
     <ul class="navbar-nav flex-row bd-navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" href="{:url('listController')}">控制器及表单</a>
+            <a class="nav-link" href="{:url('listController')}">控制器及测试表单</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{:url('listService')}">服务和调用关系</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{:url('listSchema')}">数据库结构</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{:url('listFile')}">源码代码</a>
         </li>
     </ul>
 </nav>
@@ -55,6 +59,25 @@
             if(isCurrent){
                 $this.addClass('active')
             }
+        })
+    })
+
+    $(function () {
+        $('.div-show-test').each(function () {
+            $this=$(this)
+            $this.load($this.attr('url'))
+        })
+        $('main,div.container').on('click','.btn-show-form',function () {
+            $frm=$(this).parents('form')
+            $.ajax({
+                url: $frm.attr('action'),
+                type: $frm.attr('method'),
+                data: $frm.serialize(), // "id=asdasd&s=000&name=1233"
+                success: function (rs) {
+                    var txt=JSON.stringify(rs,null,'  ')
+                    $frm.children('.msg-show-form').text(txt)
+                }
+            })
         })
     })
 </script>

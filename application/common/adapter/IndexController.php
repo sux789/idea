@@ -8,8 +8,7 @@ use think\Controller;
 class IndexController extends Controller
 {
     protected $middleware = [
-        '\app\common\middleware\Reliability::class' => [
-        ],
+        //'\app\common\middleware\Reliability::class' => [],
     ];
 
     protected $user_id=0;

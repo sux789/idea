@@ -145,12 +145,10 @@ class TopicAudit extends Service
 
     /**
      * 读取审核流程
+     * @param string $order 排序
      */
     function history(int $snap_id, string $order = 'DESC')
     {
-        $data = $this->getArgv();
-        echo "<h1>$order</h1>";
-        print_r($data);
         return $this->modelTopicFlow->history($snap_id, $order);
     }
 }

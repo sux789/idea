@@ -1,16 +1,18 @@
-
 <div class="container">
+
     <h2>接口演示:{$actionInfo.titles[0]}</h2>
-    <form action="{:url($url)}">
+    <form action="{:url($url)}" method="{$method}">
         <?php foreach($actionInfo['params'] as $paramName=>$param):
         $default=isset($param['default'])?var_export($param['default'],1):'';
         ?>
         <div class="form-group">
             <label for="{$paramName}">{$param.title|default=''}(类型:{$param.type|default=''}
                 <?php if($default):?>,默认:{$default}<?php endif?>):</label>
-            <input class="form-control" id="{$paramName}" name="{$paramName}">
+            <input class="form-control" id="{$paramName}" value="{$default}" name="{$paramName}"
+                   {if !$default} required="required"{/if} />
         </div>
         <?php endforeach?>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button  type="button" class="btn btn-primary btn-show-form">请点击，提交测试，下面显示执行响应</button>
+        <pre class="msg-show-form"></pre>
     </form>
 </div>

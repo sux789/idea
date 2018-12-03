@@ -20,9 +20,11 @@ class Index extends ReliController
         parent::__construct($app);
     }
 
-    public function index(){
-        $readme_path=Env::get('app_path').'../README.md';
-        echo  Markdown::defaultTransform(file_get_contents($readme_path));
+    public function index()
+    {
+        $readme_path = Env::get('app_path') . '../README.md';
+        $content = Markdown::defaultTransform(file_get_contents($readme_path));
+        return view('index', ['content' => $content]);
     }
 
     /**
@@ -81,8 +83,42 @@ class Index extends ReliController
 
         $data = [
             'url' => $url,
-            'actionInfo' => $actionInfo
+            'actionInfo' => $actionInfo,
+            'method' => get_http_method($actionName),
         ];
         return view('show_form', $data);
+    }
+
+    /**
+     * 显示源代码
+     * @param string $file
+     */
+    function listFile($file = '')
+    {
+        $dir = env('app_path') . 'common/';
+        $menu = list_file(
+            $dir,
+            function ($path) {
+                return strpos($path, '.php')
+                    && 0 !== strpos($path, 'adapter')
+                    && 0 !== strpos($path, 'middleware')
+                    && 0 !== strpos($path, 'exception');
+            }
+        );
+
+        // 安全和修复
+        if ($file) {
+            $file = str_replace('..', '', $file);//安全
+            if (!strpos($file, '.')) {
+                $file .= '.php';
+            }
+        }
+
+        // 支持配置文件
+        if (0 === strpos($file, 'config/')) {
+            $dir = dirname(env('config_path')) . '/';
+        }
+
+        return view('list_file', ['menu' => $menu, 'file' => $file, 'dir' => $dir]);
     }
 }

@@ -4,7 +4,7 @@ namespace app\common\middleware;
 
 use think\Db;
 /**
- * 类 可靠性中间件,帮助监控和调试
+ * 可靠性中间件,帮助监控和调试
  * @package app\common\middleware
  */
 class Reliability

@@ -10,7 +10,7 @@ class Service
     /**
      * 调用当前服务参数
      */
-    protected function getArgv()
+    final protected function getArgv()
     {
         return $this->executer->getFinalArgv();
     }
@@ -18,7 +18,7 @@ class Service
     /**
      * 当前$_POST中服务参数
      */
-    protected function getArgvOnlyPost()
+    final protected  function getArgvOnlyPost()
     {
         return array_intersect_key($this->getArgv(), $_POST);
     }

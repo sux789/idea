@@ -7,8 +7,8 @@
 namespace app\common\code_doc;
 
 /**
- * 类 对return注释解析用于自动生成文档
- * @package app\common\code_doc
+ * 对return注释解析用于自动生成文档
+ * @todo 数据库中没有字段注释，已经有的字段可以分析测试环境日志自动填充
  */
 class ReturnCommentParser
 {
@@ -59,12 +59,14 @@ class ReturnCommentParser
     private static function parseReturnField($fieldTxt)
     {
         $segs = explode(',', $fieldTxt);
+        $segs=array_filter(array_map('trim',$segs));
         $rt = [];
         foreach ($segs as $filed) {
             $fieldInfo = preg_split('/[^\w]/', $filed);
             $name = array_shift($fieldInfo);
-            $title = $fieldInfo ? join($fieldInfo) : '';
-            $rt[$name] = $title;
+            if($name && 0===strpos($filed,$name)){
+                $rt[$name]=trim(substr($filed,strlen($name))," :");
+            }
         }
         return $rt;
     }

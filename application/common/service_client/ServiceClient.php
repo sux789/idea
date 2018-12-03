@@ -3,7 +3,7 @@
 namespace app\common\service_client;
 
 /**
- * 服务调用客户端类
+ * 服务调用客户端
  */
 class ServiceClient
 {

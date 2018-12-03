@@ -5,7 +5,7 @@ namespace app\common\service_client;
 use think\Container;
 
 /**
- * 执行服务类
+ * 调用服务类对应方法
  */
 class ExecuteHandle extends BaseHandle
 {
@@ -89,7 +89,7 @@ class ExecuteHandle extends BaseHandle
 
         // 便捷传入参数,初始化$rawArgv,比如get(1)转换为get(['name'=>1])
         if (is_scalar($rawArgv) && 1 == count($parameters)) {
-            $rawArgv[$parameters[0]->getName()] = $rawArgv;
+            $rawArgv=[$parameters[0]->getName() => $rawArgv];
         }
 
         foreach ($parameters as $key => $item) {

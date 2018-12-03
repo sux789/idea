@@ -37,6 +37,8 @@ class BaseModel extends Model
         return $this;
     }
 
+
+
     /**
      * 读表分区配置
      * @param string $table 表名称

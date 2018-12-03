@@ -76,3 +76,30 @@ function get_http_method($actionName)
     return $isGet ? 'GET' : 'POST';
 }
 
+/**
+ * 显示目录
+ * @param string $path
+ * @return array
+ */
+function list_file(string $path, $filter_func = null): array
+{
+    $rt = [];
+    $len = strlen($path);
+    if (is_dir($path)) {
+        $directory = new \RecursiveDirectoryIterator($path);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        if (is_callable($filter_func)) {
+            foreach ($iterator as $info) {
+                $path = substr($info->getPathname(), $len, 100);
+                if ($filter_func($path)) {
+                    $rt[] = $path;
+                }
+            }
+        } else {
+            foreach ($iterator as $info) {
+                $rt[] = substr($info->getPathname(), $len, 100);
+            }
+        }
+    }
+    return $rt;
+}

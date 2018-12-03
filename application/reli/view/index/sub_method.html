@@ -1,6 +1,5 @@
 <?php
     $isCtl=$classInfo['isController']??false;
-
     $returnFakeStr='';
     $return_type=$method['return']['type']??'';
     $return_fields = $method['return']['fields']??[];
@@ -10,6 +9,8 @@
     }else{
         $returnFakeStr=fake_var_string($return_type,$return_fields,$isMulti);
     }
+    $srvPath=$srvPath??'';
+    $srvConfig=config("service.$srvPath");
 ?>
 <table class="table table-bordered">
     <tr>
@@ -65,30 +66,51 @@
         </td>
     </tr>
     <?php endif;?>
-
-    <?php $srvPath=$srvPath??'';
-    if($relatedAction=$relatedActions[$srvPath] ?? []):?>
+    <?php if($cl=$srvConfig['cacheLifetime']??''):?>
     <tr>
-        <td>关联控制器
+        <td>配置
         <td colspan="100">
-            <pre><?php echo join("\n",$relatedAction)?></pre>
+        <ul>
+            <li>缓存时间:{$cl}秒</li>
+        </ul>
+    </tr>
+    <?php endif;?>
+    <?php if($relatedAction=$relatedActions[$srvPath] ?? []):?>
+    <tr>
+        <td>关联action
+        <td colspan="100">
+            {foreach $relatedAction as $k=>$v}
+            <li><a href="{:url('listController')}?item={$v}">{$v}</a></li>
+            {/foreach}
+        </td>
     </tr>
     <?php endif;?>
 
     <?php if($calledService=$method['calledService'] ?? []):?>
     <tr>
-        <td>调用服务
+        <td>调用service</td>
         <td colspan="100">
-            <pre><?php echo join("\n",$calledService)?></pre>
+        {foreach $calledService as $k=>$v}
+        <li><a href="{:url('listService')}?item={$v}">{$v}</a></li>
+        {/foreach}
+        </td>
     </tr>
     <?php endif;?>
 
     <?php if($calledModel=$method['calledModel'] ?? []):?>
     <tr>
-        <td>调用模型
+        <td>调用model
         <td colspan="100">
         <?php echo join('&nbsp',$calledModel)?>
     </tr>
     <?php endif;?>
-
+    {if($isCtl)}
+    <tr>
+        <td><a target="_blank" href="{:url('showForm',['url'=>"$classPath/$methodName"])}">测试接口</a>
+        <td class="div-show-test" url="{:url('showForm',['url'=>"$classPath/$methodName"])}">
+    </tr>
+    {/if}
+    <tr><td>本接口源代码</td><td colspan="100">
+        <pre>{$method['source']['comment']}</pre><pre class="code">{$method['source']['code']}</pre>
+    </td></tr>
 </table>

@@ -96,24 +96,17 @@ function classname($str)
     return join('', array_map('ucfirst', explode('_', $str)));
 }
 
-/**
- * 统一存储密码加密方式
- * @param string $password 密码
- * @return string
- */
-function encode_password($password)
-{
-    return md5("{$password}{$password[3]}{$password[0]}{$password[1]}");
-}
 
 /**
  * get chache key
  */
 function get_cache_key($path, $argv = []): string
 {
+    $surfix = '';
     if ($argv) {
+        $argv = (array)$argv;
         ksort($argv, SORT_STRING);//一致参数固定顺序
-        $path = join('%&^`|"/', $argv);//不同参数有不同sha1,比如[10,1]与[1,01]
+        $surfix = join("\t", $argv);//不同参数有不同sha1,比如[10,1]与[1,01]
     }
-    return sha1($path);
+    return sha1($path . $surfix);
 }

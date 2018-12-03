@@ -27,20 +27,19 @@ class Misc
 
     /**
      * 登录校验
-     * @param string $mobile 手机号
-     * @param string $password 密码
      * @return array
      * @throws \app\common\exception\CodeException
+     * @table admin_user
      */
     public function verifyLogin($mobile = '', $password = '')
     {
-        $user = call_service('admin/admin_user/find', $mobile);
+        $user = call_service('admin/AdminUser/find', $mobile);
 
         if (!$user) {
             code_exception(self::ERRNO_MOBILE_NOT_EXISTS, ['mobile' => $mobile]);
         }
 
-        if (encode_password($password) != $user['password']) {
+        if (!password_verify($password, $user['password'])) {
             code_exception(self::ERRNO_PASSWORD_WRONG);
         }
 
@@ -61,12 +60,11 @@ class Misc
 
         foreach ($data as $item) {
             $item['mobile_id'] = mobile_to_id($item['mobile']);
-            $exist = call_service('admin/admin_user/exists', $item['mobile_id']);
-
+            $exist = call_service('admin/AdminUser/exists', $item['mobile_id']);
             if (!$exist) {
-                $item['password'] = encode_password($item['password']);
-                $id = call_service('admin/admin_user/add', $item);
-                echo "<p>{$item['mobile']} has created </p>";
+                $item['password'] = password_hash($item['password'], PASSWORD_DEFAULT);
+                $id = call_service('admin/AdminUser/save', $item);
+                echo "\n<p>{$item['mobile']} has created </p>";
             } else {
                 echo "<p>{$item['mobile']} exists!</p>";
             }

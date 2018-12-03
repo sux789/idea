@@ -9,9 +9,9 @@ namespace app\common;
 use think\response\Json;
 
 /**
- * Class 对前端统一的JSON输出类
- * @example config('default_ajax_return','app\\common\\JsonResponse');
- * @package app\common
+ * 自动对前端错误和返回进行统一的封装
+ * - 自动对格式进行封装,就是不用手动去修改action的返回，比如 return 1;
+ * - 配置'default_ajax_return'=>'app\\common\\JsonResponse';
  */
 class JsonResponse extends Json
 {

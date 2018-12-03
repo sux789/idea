@@ -5,7 +5,6 @@ namespace app\common\service_client;
 use think\facade\Cache;
 
 /**
- * 服务结果缓存类
  * 对路径和参数为键缓存服务执行结果
  * @todo 提供注入缓存键处理器,缓存键可能是数组用于支持集合,但还没处理
  */

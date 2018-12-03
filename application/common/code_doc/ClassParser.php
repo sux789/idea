@@ -3,7 +3,6 @@
 namespace app\common\code_doc;
 
 /**
- * 类解析类
  * 解析类方法标题,参数,注释,及控制器与服务调用关系
  */
 class ClassParser
@@ -48,17 +47,25 @@ class ClassParser
             'fileName' => $method->getFileName(),
             'comment' => $method->getDocComment(),
         ];
-
+        $rt['source']['code']=self::getSource($rt['source']);
         if ($classInfo['isController']) {
-            $rt['calledService'] = self::parseCalledService($rt['source']);
+            $rt['calledService'] = self::parseCalledService($rt['source']['code']);
         } else {
-            $rt['calledModel'] = self::parseCalledModel($rt['source']);
+            $rt['calledModel'] = self::parseCalledModel($rt['source']['code']);
         }
 
         $parsedComment = MethodCommentParser::handle($rt['source']['comment']);
         $rt['titles'] = $parsedComment['titles'];
 
         $refTables = SchemaFieldReader::vaildTableName($parsedComment['tables']);
+        if(!empty($rt['calledModel'])){
+            foreach ($rt['calledModel'] as $modelName){
+                $refTables[]=lowercase_classname($modelName);
+            }
+            $refTables=array_unique($refTables);
+        }
+
+
         if (!$refTables) {
             $refTables = SchemaFieldReader::vaildTableName($classInfo['lowerName']);
         }
@@ -82,12 +89,12 @@ class ClassParser
      * 解析对应代码所调用的服务
      * @param array $sourceInfo 代码信息
      * @return array
+     * @todo 类名称支持小写,应该对类名称执行classname转换
      */
-    private static function parseCalledService($sourceInfo)
+    private static function parseCalledService($code)
     {
-        $source = self::getSource($sourceInfo);
         $pattern = '/call_service[\\s]*\([\\s]*[\\\'|\\"]([^\\\'\\"]+)/';
-        preg_match_all($pattern, $source, $out);
+        preg_match_all($pattern, $code, $out);
         return $out[1] ?? [];
     }
 
@@ -98,19 +105,18 @@ class ClassParser
      */
     private static function getSource($sourceInfo)
     {
-        $start = $sourceInfo['startLine'];
+        $start = $sourceInfo['startLine']-1;
         $lenth = $sourceInfo['endLine'] - $start;
-        return join("\n", array_slice(file($sourceInfo['fileName']), $start, $lenth));
+        return join("", array_slice(file($sourceInfo['fileName']), $start, $lenth));
     }
 
     /**
      * 解析对应代码调用model
      */
-    private static function parseCalledModel($sourceInfo)
+    private static function parseCalledModel($code)
     {
-        $source = self::getSource($sourceInfo);
         $pattern = '/\\$this[\\s]*->[\\s]*model([\w]+)/';
-        preg_match_all($pattern, $source, $out);
+        preg_match_all($pattern, $code, $out);
         return $out[1] ?? [];
     }
 
@@ -128,6 +134,9 @@ class ClassParser
             $rt[$name] = [];
             if ($item->isDefaultValueAvailable()) {
                 $rt[$name]['default'] = $item->isDefaultValueAvailable() ? $item->getDefaultValue() : false;
+                if($item->hasType()){
+                    $rt[$name]['type']=(string)$item->getType();
+                }
             }
         }
         return $rt;

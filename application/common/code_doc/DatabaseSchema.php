@@ -5,8 +5,7 @@ namespace app\common\code_doc;
 use think\Db;
 
 /**
- * 类 提供数据库结构
- * @package app\common\code_doc
+ * 读取数据库结构
  * @todo 应根据配置处理多数据库情况
  */
 class DatabaseSchema

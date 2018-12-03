@@ -3,7 +3,7 @@
 namespace app\common\code_doc;
 
 /**
- * 类 方法注释解析
+ * 解析方法的注释
  */
 class MethodCommentParser
 {

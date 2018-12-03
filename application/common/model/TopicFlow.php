@@ -72,6 +72,7 @@ class TopicFlow extends BaseModel
 
     /**
      * 读取审核历史
+     * @param string $order 排序
      */
     function history(int $snap_id, string $order = 'DESC')
     {

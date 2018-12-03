@@ -28,18 +28,16 @@ class AdminUser extends Service
             'mobile_id' => mobile_to_id($mobile),
             'mobile' => $mobile,
         ];
-        return $this->modelAdminUser
-            ->where($where)
-            ->find();
+        return $this->modelAdminUser->get($where);
     }
 
     /**
      * 添加
      */
-    function add($mobile_id, $mobile, $name, $password)
+    function save($mobile_id, $mobile, $name, $password)
     {
         $argv = $this->getArgv();
-        return $this->modelAdminUser->insertGetId($argv);
+        return $this->modelAdminUser->insert($argv);
     }
 
     /**
@@ -47,9 +45,8 @@ class AdminUser extends Service
      */
     function exists($mobile_id)
     {
-        return $this->modelAdminUser
-            ->where(['mobile_id' => $mobile_id])
-            ->value('mobile_id');
+        $argv = $this->getArgv();
+        return $this->modelAdminUser->get($argv);
     }
 
 

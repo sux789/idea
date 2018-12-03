@@ -6,7 +6,7 @@ use think\Db;
 use app\common\service_client\BaseHandle;
 
 /**
- * 提供事物处理
+ * 提供事物处理，其实这个例子不合适，不应该使用数据库事务
  */
 class TransactionHandle extends BaseHandle
 {

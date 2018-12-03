@@ -7,7 +7,7 @@
 namespace app\common\system_service\auth;
 
 /**
- * 类 登录认证
+ * 身份认证
  * 使用:登录成功createToken设置或返回token,读取登录信息get
  * @package app\common\system_service\auth
  */

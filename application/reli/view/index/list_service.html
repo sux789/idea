@@ -12,7 +12,7 @@
                     foreach($classInfo['methods'] as $methodName=>$method):
                     $srvPath="$classPath/$methodName";
                     ?>
-                    <li>{$srvPath}</li>
+                    <li><a href="?item={$srvPath}">{$classPath}/{$methodName}</a></li>
                     <?php endforeach;endforeach?>
                 </ol>
             </div>
@@ -28,7 +28,7 @@
                 </div>
             </div>-->
         </div>
-        <p>解析服务参数,返回;知道关联,修改会影响哪些接口</p>
+        <p>解析服务参数、返回参数说明;控制器action、服务、模型对应调用关系;接口对应源代码</p>
         <?php
         $i=0;
         foreach ($data as $class => $classInfo):
@@ -40,6 +40,12 @@
         $classPath=join('/',$segs);
         foreach($classInfo['methods'] as $methodName=>$method):
         $srvPath=$classPath.'/'.$methodName;
+
+        if($item=input('item')){
+            if($item!= $srvPath){
+                continue;
+            }
+        }
 
         ?>
         <a name="{$srvPath}"></a>

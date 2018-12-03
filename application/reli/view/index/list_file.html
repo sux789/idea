@@ -1,0 +1,49 @@
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ol>
+                <?php foreach ($menu as $item):
+                    ?>
+                    <li><a href="{:url('listFile')}?file={$item}">{$item}</a></li>
+                    <?php endforeach?>
+                </ol>
+            </div>
+        </nav>
+    </div>
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap flex-sm-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">实例代码</h1>
+            <!--<div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group mr-2">
+                    <button class="btn btn-sm btn-outline-secondary">Share</button>
+                    <button class="btn btn-sm btn-outline-secondary">Export</button>
+                </div>
+            </div>-->
+        </div>
+        {if($file && is_file("$dir/$file"))}
+        <p>文件{$file}</p>
+        <?php highlight_file($dir.$file);?>
+        {else}
+        <h3>左边文件概述</h3>
+        <ol>
+            <li>common/adapter 框架解耦
+            <li>common/code_doc 由代码生成文档
+            <li>common/service_client 服务调用客户端</li>
+            <li>common/system_service 系统服务,统一维护某些技术点或规划，不必每一个人都去搞明白
+            <li>common/service 业务逻辑服务
+        </ol>
+        <h3>代码风格</h3>
+        <ol>
+            <li>类纵横切割
+            <li>函数分成小函数
+            <li>小函数按变量来分，
+            <li>小函数内一个return;
+        </ol>
+        {/if}
+
+        </main>
+
+
+</div>

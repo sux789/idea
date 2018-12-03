@@ -12,7 +12,7 @@ use think\Response;
 use app\common\JsonResponse;
 
 /**
- * 类 统一错误处理及统一前端格式
+ * 统一错误处理及统一前端格式
  * @package app\common\exception
  */
 class Http extends Handle

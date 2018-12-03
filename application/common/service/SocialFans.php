@@ -6,37 +6,44 @@ use app\common\adapter\Service;
 use app\common\model\SocialFans as SocialFansModel;
 
 /**
- * 类 关注的粉丝表,用于通知
- * @package app\common\service
+ * 关注的粉丝表,用于发送关注信息给粉丝
  */
 class SocialFans extends Service
 {
-    private $modelSocialFans;
+    protected $modelSocialFans;
 
-    public function __construct(SocialFansModel $modelFans)
+    public function __construct(SocialFansModel $modelSocialFans)
     {
-        $this->modelSocialFans = $modelFans;
+        $this->modelSocialFans = $modelSocialFans;
     }
 
     /**
-     * 读取粉丝数据
-     * @param int $last_id 上一页最小ID
-     * @param int $count 每页条数
-     * @return array
+     * 统计偶像和粉丝数目
+     * - 为文档举例
+     * @return array [idol_count关注人数,fans_count粉丝人数]
      */
-    function listFans($idol_id, $last_id = 0, $count = 10)
+    function sum(int $user_id = 1)
     {
-        $where = [['idol_id', '=', $idol_id]];
-        if ($last_id) {
-            $where[] = ['id', '<', $last_id];
-        }
-
-        return $this->modelSocialFans
-                ->setPartition(['idol_id' => $idol_id])
-                ->field('id,fans_id,idol_id')
-                ->where($where)
-                ->limit($count)
-                ->select() ?? [];
+        $sql = "
+        WITH 
+        t_count_1 AS 
+            ( SELECT COUNT( idol_id ) AS idol_count, 0 AS fans_count 
+            FROM social_idol 
+            WHERE fans_id=$user_id
+            ) ,
+        t_count_2 AS 
+            ( SELECT 0 AS idol_count, COUNT( fans_id ) AS fans_count 
+            FROM  social_fans
+            WHERE idol_id=$user_id
+            ) ,
+        t_total AS 
+            (   SELECT * from t_count_1 
+                UNION ALL 
+                SELECT * from t_count_2
+            )
+        SELECT sum(idol_count) as idol_count, sum(fans_count) as fans_count 
+        FROM t_total 
+        ";
+        return $this->modelSocialFans->query($sql);
     }
-
 }
